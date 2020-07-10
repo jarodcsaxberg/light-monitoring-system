@@ -1,0 +1,20 @@
+EESchema-DOCLIB  Version 2.0
+#
+$CMP STM32L432KBUx
+D ARM Cortex-M4 MCU, 128KB flash, 64KB RAM, 80MHz, 1.71-3.6V, 26 GPIO, UFQFPN-32
+K ARM Cortex-M4 STM32L4 STM32L4x2
+F http://www.st.com/st-web-ui/static/active/en/resource/technical/document/datasheet/DM00257205.pdf
+$ENDCMP
+#
+$CMP STM32L432KCUx
+D ARM Cortex-M4 MCU, 256KB flash, 64KB RAM, 80MHz, 1.71-3.6V, 26 GPIO, UFQFPN-32
+K ARM Cortex-M4 STM32L4 STM32L4x2
+F http://www.st.com/st-web-ui/static/active/en/resource/technical/document/datasheet/DM00257205.pdf
+$ENDCMP
+#
+$CMP TSL237S-LF
+D Light To Frequency & Light To Voltage Light to Frequency High Responsivity
+F https://componentsearchengine.com/Datasheets/1/TSL237S-LF.pdf
+$ENDCMP
+#
+#End Doc Library

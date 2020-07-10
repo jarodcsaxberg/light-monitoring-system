@@ -1,0 +1,873 @@
+ARM GAS  /tmp/cc7HG4xn.s 			page 1
+
+
+   1              		.cpu cortex-m4
+   2              		.eabi_attribute 27, 1
+   3              		.eabi_attribute 28, 1
+   4              		.eabi_attribute 20, 1
+   5              		.eabi_attribute 21, 1
+   6              		.eabi_attribute 23, 3
+   7              		.eabi_attribute 24, 1
+   8              		.eabi_attribute 25, 1
+   9              		.eabi_attribute 26, 1
+  10              		.eabi_attribute 30, 1
+  11              		.eabi_attribute 34, 1
+  12              		.eabi_attribute 18, 4
+  13              		.file	"sensor.c"
+  14              		.text
+  15              	.Ltext0:
+  16              		.cfi_sections	.debug_frame
+  17              		.section	.text.calculate_freq,"ax",%progbits
+  18              		.align	1
+  19              		.global	calculate_freq
+  20              		.arch armv7e-m
+  21              		.syntax unified
+  22              		.thumb
+  23              		.thumb_func
+  24              		.fpu fpv4-sp-d16
+  26              	calculate_freq:
+  27              	.LFB309:
+  28              		.file 1 "Src/sensor.c"
+   1:Src/sensor.c  **** #include <_ansi.h>
+   2:Src/sensor.c  **** #include <_syslist.h>
+   3:Src/sensor.c  **** #include <errno.h>
+   4:Src/sensor.c  **** #include <sys/time.h>
+   5:Src/sensor.c  **** #include <sys/times.h>
+   6:Src/sensor.c  **** #include <limits.h>
+   7:Src/sensor.c  **** #include <signal.h>
+   8:Src/sensor.c  **** #include <stdint.h>
+   9:Src/sensor.c  **** #include <stdio.h>
+  10:Src/sensor.c  **** #include "retarget.h"
+  11:Src/sensor.c  **** #include "main.h"
+  12:Src/sensor.c  **** #include <string.h>
+  13:Src/sensor.c  **** #include <stdlib.h>
+  14:Src/sensor.c  **** 
+  15:Src/sensor.c  **** #include "sensor.h"
+  16:Src/sensor.c  **** 
+  17:Src/sensor.c  **** extern TIM_HandleTypeDef htim2;
+  18:Src/sensor.c  **** extern ADC_HandleTypeDef hadc1;
+  19:Src/sensor.c  **** 
+  20:Src/sensor.c  **** volatile uint8_t captureDone = 0;
+  21:Src/sensor.c  **** 
+  22:Src/sensor.c  **** float calculate_freq() {
+  29              		.loc 1 22 24 view -0
+  30              		.cfi_startproc
+  31              		@ args = 0, pretend = 0, frame = 8
+  32              		@ frame_needed = 0, uses_anonymous_args = 0
+  33 0000 10B5     		push	{r4, lr}
+  34              	.LCFI0:
+  35              		.cfi_def_cfa_offset 8
+  36              		.cfi_offset 4, -8
+ARM GAS  /tmp/cc7HG4xn.s 			page 2
+
+
+  37              		.cfi_offset 14, -4
+  38 0002 82B0     		sub	sp, sp, #8
+  39              	.LCFI1:
+  40              		.cfi_def_cfa_offset 16
+  23:Src/sensor.c  ****   uint32_t captures[2];
+  41              		.loc 1 23 3 view .LVU1
+  24:Src/sensor.c  ****   uint32_t diffCapture = 0;
+  42              		.loc 1 24 3 view .LVU2
+  43              	.LVL0:
+  25:Src/sensor.c  ****   float freq = 0;
+  44              		.loc 1 25 3 view .LVU3
+  26:Src/sensor.c  **** 
+  27:Src/sensor.c  ****   HAL_TIM_IC_Start_DMA(&htim2, TIM_CHANNEL_1, (uint32_t*) captures, 2);
+  45              		.loc 1 27 3 view .LVU4
+  46 0004 0223     		movs	r3, #2
+  47 0006 6A46     		mov	r2, sp
+  48 0008 0021     		movs	r1, #0
+  49 000a 1448     		ldr	r0, .L6
+  50 000c FFF7FEFF 		bl	HAL_TIM_IC_Start_DMA
+  51              	.LVL1:
+  52              	.L2:
+  28:Src/sensor.c  **** 
+  29:Src/sensor.c  ****   while(1){
+  53              		.loc 1 29 3 view .LVU5
+  30:Src/sensor.c  ****     if(captureDone){
+  54              		.loc 1 30 5 view .LVU6
+  55              		.loc 1 30 8 is_stmt 0 view .LVU7
+  56 0010 134B     		ldr	r3, .L6+4
+  57 0012 1B78     		ldrb	r3, [r3]	@ zero_extendqisi2
+  58              		.loc 1 30 7 view .LVU8
+  59 0014 002B     		cmp	r3, #0
+  60 0016 FBD0     		beq	.L2
+  31:Src/sensor.c  ****       if(captures[1] >= captures[0]) {
+  61              		.loc 1 31 7 is_stmt 1 view .LVU9
+  62              		.loc 1 31 18 is_stmt 0 view .LVU10
+  63 0018 019B     		ldr	r3, [sp, #4]
+  64              		.loc 1 31 33 view .LVU11
+  65 001a 009C     		ldr	r4, [sp]
+  66              		.loc 1 31 9 view .LVU12
+  67 001c A342     		cmp	r3, r4
+  68 001e 17D3     		bcc	.L3
+  32:Src/sensor.c  ****         diffCapture = captures[1] - captures[0];
+  69              		.loc 1 32 9 is_stmt 1 view .LVU13
+  70              		.loc 1 32 21 is_stmt 0 view .LVU14
+  71 0020 1C1B     		subs	r4, r3, r4
+  72              	.LVL2:
+  73              	.L4:
+  33:Src/sensor.c  ****       }
+  34:Src/sensor.c  ****       else {
+  35:Src/sensor.c  ****         diffCapture = (htim2.Instance->ARR - captures[0]) + captures[1];
+  36:Src/sensor.c  ****       }
+  37:Src/sensor.c  **** 
+  38:Src/sensor.c  ****       freq = HAL_RCC_GetHCLKFreq() / (htim2.Instance->PSC + 1);
+  74              		.loc 1 38 7 is_stmt 1 view .LVU15
+  75              		.loc 1 38 14 is_stmt 0 view .LVU16
+  76 0022 FFF7FEFF 		bl	HAL_RCC_GetHCLKFreq
+  77              	.LVL3:
+ARM GAS  /tmp/cc7HG4xn.s 			page 3
+
+
+  78              		.loc 1 38 44 view .LVU17
+  79 0026 0D4B     		ldr	r3, .L6
+  80 0028 1B68     		ldr	r3, [r3]
+  81              		.loc 1 38 53 view .LVU18
+  82 002a 9B6A     		ldr	r3, [r3, #40]
+  83              		.loc 1 38 59 view .LVU19
+  84 002c 0133     		adds	r3, r3, #1
+  85              		.loc 1 38 36 view .LVU20
+  86 002e B0FBF3F0 		udiv	r0, r0, r3
+  87              		.loc 1 38 12 view .LVU21
+  88 0032 07EE900A 		vmov	s15, r0	@ int
+  89 0036 F8EE677A 		vcvt.f32.u32	s15, s15
+  90              	.LVL4:
+  39:Src/sensor.c  ****       freq = (float) freq / diffCapture;
+  91              		.loc 1 39 7 is_stmt 1 view .LVU22
+  92              		.loc 1 39 27 is_stmt 0 view .LVU23
+  93 003a 07EE104A 		vmov	s14, r4	@ int
+  94 003e B8EE470A 		vcvt.f32.u32	s0, s14
+  95              	.LVL5:
+  40:Src/sensor.c  **** 
+  41:Src/sensor.c  ****       captureDone = 0;
+  96              		.loc 1 41 7 is_stmt 1 view .LVU24
+  97              		.loc 1 41 19 is_stmt 0 view .LVU25
+  98 0042 074B     		ldr	r3, .L6+4
+  99 0044 0022     		movs	r2, #0
+ 100 0046 1A70     		strb	r2, [r3]
+  42:Src/sensor.c  ****       break;
+ 101              		.loc 1 42 7 is_stmt 1 view .LVU26
+  43:Src/sensor.c  ****     }
+  44:Src/sensor.c  ****   }
+  45:Src/sensor.c  ****   
+  46:Src/sensor.c  ****   return freq;
+ 102              		.loc 1 46 3 view .LVU27
+  47:Src/sensor.c  **** }
+ 103              		.loc 1 47 1 is_stmt 0 view .LVU28
+ 104 0048 87EE800A 		vdiv.f32	s0, s15, s0
+ 105              	.LVL6:
+ 106              		.loc 1 47 1 view .LVU29
+ 107 004c 02B0     		add	sp, sp, #8
+ 108              	.LCFI2:
+ 109              		.cfi_remember_state
+ 110              		.cfi_def_cfa_offset 8
+ 111              		@ sp needed
+ 112 004e 10BD     		pop	{r4, pc}
+ 113              	.LVL7:
+ 114              	.L3:
+ 115              	.LCFI3:
+ 116              		.cfi_restore_state
+  35:Src/sensor.c  ****       }
+ 117              		.loc 1 35 9 is_stmt 1 view .LVU30
+  35:Src/sensor.c  ****       }
+ 118              		.loc 1 35 29 is_stmt 0 view .LVU31
+ 119 0050 024A     		ldr	r2, .L6
+ 120 0052 1268     		ldr	r2, [r2]
+  35:Src/sensor.c  ****       }
+ 121              		.loc 1 35 38 view .LVU32
+ 122 0054 D26A     		ldr	r2, [r2, #44]
+ARM GAS  /tmp/cc7HG4xn.s 			page 4
+
+
+  35:Src/sensor.c  ****       }
+ 123              		.loc 1 35 44 view .LVU33
+ 124 0056 141B     		subs	r4, r2, r4
+  35:Src/sensor.c  ****       }
+ 125              		.loc 1 35 21 view .LVU34
+ 126 0058 1C44     		add	r4, r4, r3
+ 127              	.LVL8:
+  35:Src/sensor.c  ****       }
+ 128              		.loc 1 35 21 view .LVU35
+ 129 005a E2E7     		b	.L4
+ 130              	.L7:
+ 131              		.align	2
+ 132              	.L6:
+ 133 005c 00000000 		.word	htim2
+ 134 0060 00000000 		.word	.LANCHOR0
+ 135              		.cfi_endproc
+ 136              	.LFE309:
+ 138              		.section	.text.calculate_period,"ax",%progbits
+ 139              		.align	1
+ 140              		.global	calculate_period
+ 141              		.syntax unified
+ 142              		.thumb
+ 143              		.thumb_func
+ 144              		.fpu fpv4-sp-d16
+ 146              	calculate_period:
+ 147              	.LFB310:
+  48:Src/sensor.c  **** 
+  49:Src/sensor.c  **** uint32_t calculate_period() {
+ 148              		.loc 1 49 29 is_stmt 1 view -0
+ 149              		.cfi_startproc
+ 150              		@ args = 0, pretend = 0, frame = 8
+ 151              		@ frame_needed = 0, uses_anonymous_args = 0
+ 152 0000 00B5     		push	{lr}
+ 153              	.LCFI4:
+ 154              		.cfi_def_cfa_offset 4
+ 155              		.cfi_offset 14, -4
+ 156 0002 83B0     		sub	sp, sp, #12
+ 157              	.LCFI5:
+ 158              		.cfi_def_cfa_offset 16
+  50:Src/sensor.c  ****   uint32_t captures[2];
+ 159              		.loc 1 50 3 view .LVU37
+  51:Src/sensor.c  ****   uint32_t diffCapture = 0;
+ 160              		.loc 1 51 3 view .LVU38
+ 161              	.LVL9:
+  52:Src/sensor.c  **** 
+  53:Src/sensor.c  ****   HAL_TIM_IC_Start_DMA(&htim2, TIM_CHANNEL_1, (uint32_t*) captures, 2);
+ 162              		.loc 1 53 3 view .LVU39
+ 163 0004 0223     		movs	r3, #2
+ 164 0006 6A46     		mov	r2, sp
+ 165 0008 0021     		movs	r1, #0
+ 166 000a 0C48     		ldr	r0, .L13
+ 167 000c FFF7FEFF 		bl	HAL_TIM_IC_Start_DMA
+ 168              	.LVL10:
+ 169              	.L9:
+  54:Src/sensor.c  **** 
+  55:Src/sensor.c  ****   while(1){
+ 170              		.loc 1 55 3 view .LVU40
+ARM GAS  /tmp/cc7HG4xn.s 			page 5
+
+
+  56:Src/sensor.c  ****     if(captureDone){
+ 171              		.loc 1 56 5 view .LVU41
+ 172              		.loc 1 56 8 is_stmt 0 view .LVU42
+ 173 0010 0B4B     		ldr	r3, .L13+4
+ 174 0012 1B78     		ldrb	r3, [r3]	@ zero_extendqisi2
+ 175              		.loc 1 56 7 view .LVU43
+ 176 0014 002B     		cmp	r3, #0
+ 177 0016 FBD0     		beq	.L9
+  57:Src/sensor.c  ****       if(captures[1] >= captures[0]) {
+ 178              		.loc 1 57 7 is_stmt 1 view .LVU44
+ 179              		.loc 1 57 18 is_stmt 0 view .LVU45
+ 180 0018 0198     		ldr	r0, [sp, #4]
+ 181              		.loc 1 57 33 view .LVU46
+ 182 001a 009B     		ldr	r3, [sp]
+ 183              		.loc 1 57 9 view .LVU47
+ 184 001c 9842     		cmp	r0, r3
+ 185 001e 06D3     		bcc	.L10
+  58:Src/sensor.c  ****         diffCapture = captures[1] - captures[0];
+ 186              		.loc 1 58 9 is_stmt 1 view .LVU48
+ 187              		.loc 1 58 21 is_stmt 0 view .LVU49
+ 188 0020 C01A     		subs	r0, r0, r3
+ 189              	.LVL11:
+ 190              	.L11:
+  59:Src/sensor.c  ****       }
+  60:Src/sensor.c  ****       else {
+  61:Src/sensor.c  ****         diffCapture = (htim2.Instance->ARR - captures[0]) + captures[1];
+  62:Src/sensor.c  ****       }
+  63:Src/sensor.c  ****       captureDone = 0;
+ 191              		.loc 1 63 7 is_stmt 1 view .LVU50
+ 192              		.loc 1 63 19 is_stmt 0 view .LVU51
+ 193 0022 074B     		ldr	r3, .L13+4
+ 194 0024 0022     		movs	r2, #0
+ 195 0026 1A70     		strb	r2, [r3]
+  64:Src/sensor.c  ****       break;
+ 196              		.loc 1 64 7 is_stmt 1 view .LVU52
+  65:Src/sensor.c  ****     }
+  66:Src/sensor.c  ****   }
+  67:Src/sensor.c  ****   
+  68:Src/sensor.c  ****   return diffCapture;
+ 197              		.loc 1 68 3 view .LVU53
+  69:Src/sensor.c  **** }
+ 198              		.loc 1 69 1 is_stmt 0 view .LVU54
+ 199 0028 03B0     		add	sp, sp, #12
+ 200              	.LCFI6:
+ 201              		.cfi_remember_state
+ 202              		.cfi_def_cfa_offset 4
+ 203              		@ sp needed
+ 204 002a 5DF804FB 		ldr	pc, [sp], #4
+ 205              	.LVL12:
+ 206              	.L10:
+ 207              	.LCFI7:
+ 208              		.cfi_restore_state
+  61:Src/sensor.c  ****       }
+ 209              		.loc 1 61 9 is_stmt 1 view .LVU55
+  61:Src/sensor.c  ****       }
+ 210              		.loc 1 61 29 is_stmt 0 view .LVU56
+ 211 002e 034A     		ldr	r2, .L13
+ARM GAS  /tmp/cc7HG4xn.s 			page 6
+
+
+ 212 0030 1268     		ldr	r2, [r2]
+  61:Src/sensor.c  ****       }
+ 213              		.loc 1 61 38 view .LVU57
+ 214 0032 D26A     		ldr	r2, [r2, #44]
+  61:Src/sensor.c  ****       }
+ 215              		.loc 1 61 44 view .LVU58
+ 216 0034 D31A     		subs	r3, r2, r3
+  61:Src/sensor.c  ****       }
+ 217              		.loc 1 61 21 view .LVU59
+ 218 0036 1844     		add	r0, r0, r3
+ 219              	.LVL13:
+  61:Src/sensor.c  ****       }
+ 220              		.loc 1 61 21 view .LVU60
+ 221 0038 F3E7     		b	.L11
+ 222              	.L14:
+ 223 003a 00BF     		.align	2
+ 224              	.L13:
+ 225 003c 00000000 		.word	htim2
+ 226 0040 00000000 		.word	.LANCHOR0
+ 227              		.cfi_endproc
+ 228              	.LFE310:
+ 230              		.section	.text.HAL_TIM_IC_CaptureCallback,"ax",%progbits
+ 231              		.align	1
+ 232              		.global	HAL_TIM_IC_CaptureCallback
+ 233              		.syntax unified
+ 234              		.thumb
+ 235              		.thumb_func
+ 236              		.fpu fpv4-sp-d16
+ 238              	HAL_TIM_IC_CaptureCallback:
+ 239              	.LVL14:
+ 240              	.LFB311:
+  70:Src/sensor.c  **** 
+  71:Src/sensor.c  **** void HAL_TIM_IC_CaptureCallback(TIM_HandleTypeDef *htim) {
+ 241              		.loc 1 71 58 is_stmt 1 view -0
+ 242              		.cfi_startproc
+ 243              		@ args = 0, pretend = 0, frame = 0
+ 244              		@ frame_needed = 0, uses_anonymous_args = 0
+ 245              		@ link register save eliminated.
+  72:Src/sensor.c  ****   if (htim->Channel == HAL_TIM_ACTIVE_CHANNEL_1) {
+ 246              		.loc 1 72 3 view .LVU62
+ 247              		.loc 1 72 11 is_stmt 0 view .LVU63
+ 248 0000 037F     		ldrb	r3, [r0, #28]	@ zero_extendqisi2
+ 249              		.loc 1 72 6 view .LVU64
+ 250 0002 012B     		cmp	r3, #1
+ 251 0004 00D0     		beq	.L17
+ 252              	.L15:
+  73:Src/sensor.c  ****     captureDone = 1;
+  74:Src/sensor.c  ****   }
+  75:Src/sensor.c  **** }
+ 253              		.loc 1 75 1 view .LVU65
+ 254 0006 7047     		bx	lr
+ 255              	.L17:
+  73:Src/sensor.c  ****     captureDone = 1;
+ 256              		.loc 1 73 5 is_stmt 1 view .LVU66
+  73:Src/sensor.c  ****     captureDone = 1;
+ 257              		.loc 1 73 17 is_stmt 0 view .LVU67
+ 258 0008 014B     		ldr	r3, .L18
+ARM GAS  /tmp/cc7HG4xn.s 			page 7
+
+
+ 259 000a 0122     		movs	r2, #1
+ 260 000c 1A70     		strb	r2, [r3]
+ 261              		.loc 1 75 1 view .LVU68
+ 262 000e FAE7     		b	.L15
+ 263              	.L19:
+ 264              		.align	2
+ 265              	.L18:
+ 266 0010 00000000 		.word	.LANCHOR0
+ 267              		.cfi_endproc
+ 268              	.LFE311:
+ 270              		.section	.text.read_vrefint,"ax",%progbits
+ 271              		.align	1
+ 272              		.global	read_vrefint
+ 273              		.syntax unified
+ 274              		.thumb
+ 275              		.thumb_func
+ 276              		.fpu fpv4-sp-d16
+ 278              	read_vrefint:
+ 279              	.LFB313:
+  76:Src/sensor.c  **** 
+  77:Src/sensor.c  **** uint32_t read_temp(void) {
+  78:Src/sensor.c  ****   static uint32_t first_time_up = 1;
+  79:Src/sensor.c  ****   static ADC_ChannelConfTypeDef sConfig = {0};
+  80:Src/sensor.c  ****   uint32_t rawTemp;
+  81:Src/sensor.c  ****   uint32_t vref;
+  82:Src/sensor.c  ****   uint32_t temp;
+  83:Src/sensor.c  ****     
+  84:Src/sensor.c  ****   if (first_time_up) {
+  85:Src/sensor.c  ****     sConfig.Channel = ADC_CHANNEL_TEMPSENSOR;
+  86:Src/sensor.c  ****     sConfig.Rank = ADC_REGULAR_RANK_1;
+  87:Src/sensor.c  ****     sConfig.SamplingTime = ADC_SAMPLETIME_47CYCLES_5;
+  88:Src/sensor.c  ****     sConfig.SingleDiff = ADC_SINGLE_ENDED;
+  89:Src/sensor.c  ****     sConfig.OffsetNumber = ADC_OFFSET_NONE;
+  90:Src/sensor.c  ****     sConfig.Offset = 0;
+  91:Src/sensor.c  ****     first_time_up = 0;
+  92:Src/sensor.c  ****   }
+  93:Src/sensor.c  ****   sConfig.Rank = ADC_REGULAR_RANK_1;
+  94:Src/sensor.c  ****   if (HAL_ADC_ConfigChannel(&hadc1, &sConfig) != HAL_OK) {
+  95:Src/sensor.c  ****       Error_Handler();
+  96:Src/sensor.c  ****   }
+  97:Src/sensor.c  ****   HAL_ADC_Start(&hadc1); 
+  98:Src/sensor.c  ****   HAL_ADC_PollForConversion(&hadc1, HAL_MAX_DELAY);
+  99:Src/sensor.c  ****   rawTemp = HAL_ADC_GetValue(&hadc1);
+ 100:Src/sensor.c  ****   HAL_ADC_Stop(&hadc1);
+ 101:Src/sensor.c  ****   /* sConfig.Rank = ADC_REGULAR_RANK_2; */
+ 102:Src/sensor.c  ****   /* if (HAL_ADC_ConfigChannel(&hadc1, &sConfig) != HAL_OK) { */
+ 103:Src/sensor.c  ****   /*     Error_Handler(); */
+ 104:Src/sensor.c  ****   /* } */
+ 105:Src/sensor.c  ****   vref = read_vrefint();
+ 106:Src/sensor.c  ****   temp = (__HAL_ADC_CALC_TEMPERATURE(vref,
+ 107:Src/sensor.c  ****                                      rawTemp,
+ 108:Src/sensor.c  ****                                      ADC_RESOLUTION_12B));
+ 109:Src/sensor.c  ****   return temp;
+ 110:Src/sensor.c  **** }
+ 111:Src/sensor.c  **** 
+ 112:Src/sensor.c  **** uint32_t read_vrefint(void) {
+ 280              		.loc 1 112 29 is_stmt 1 view -0
+ARM GAS  /tmp/cc7HG4xn.s 			page 8
+
+
+ 281              		.cfi_startproc
+ 282              		@ args = 0, pretend = 0, frame = 0
+ 283              		@ frame_needed = 0, uses_anonymous_args = 0
+ 284 0000 38B5     		push	{r3, r4, r5, lr}
+ 285              	.LCFI8:
+ 286              		.cfi_def_cfa_offset 16
+ 287              		.cfi_offset 3, -16
+ 288              		.cfi_offset 4, -12
+ 289              		.cfi_offset 5, -8
+ 290              		.cfi_offset 14, -4
+ 113:Src/sensor.c  ****   static uint32_t first_time_up = 1;
+ 291              		.loc 1 113 3 view .LVU70
+ 114:Src/sensor.c  ****   static ADC_ChannelConfTypeDef sConfig = {0};
+ 292              		.loc 1 114 3 view .LVU71
+ 115:Src/sensor.c  ****   uint32_t rawVintref;
+ 293              		.loc 1 115 3 view .LVU72
+ 116:Src/sensor.c  **** 
+ 117:Src/sensor.c  ****   if (first_time_up) {
+ 294              		.loc 1 117 3 view .LVU73
+ 295              		.loc 1 117 7 is_stmt 0 view .LVU74
+ 296 0002 1E4B     		ldr	r3, .L27
+ 297 0004 1B68     		ldr	r3, [r3]
+ 298              		.loc 1 117 6 view .LVU75
+ 299 0006 5BB1     		cbz	r3, .L21
+ 118:Src/sensor.c  ****     sConfig.Channel = ADC_CHANNEL_VREFINT;
+ 300              		.loc 1 118 5 is_stmt 1 view .LVU76
+ 301              		.loc 1 118 21 is_stmt 0 view .LVU77
+ 302 0008 1D4B     		ldr	r3, .L27+4
+ 303 000a 1E4A     		ldr	r2, .L27+8
+ 304 000c 1A60     		str	r2, [r3]
+ 119:Src/sensor.c  ****     sConfig.Rank = ADC_REGULAR_RANK_1;
+ 305              		.loc 1 119 5 is_stmt 1 view .LVU78
+ 120:Src/sensor.c  ****     sConfig.SamplingTime = ADC_SAMPLETIME_47CYCLES_5;
+ 306              		.loc 1 120 5 view .LVU79
+ 307              		.loc 1 120 26 is_stmt 0 view .LVU80
+ 308 000e 0422     		movs	r2, #4
+ 309 0010 9A60     		str	r2, [r3, #8]
+ 121:Src/sensor.c  ****     sConfig.SingleDiff = ADC_SINGLE_ENDED;
+ 310              		.loc 1 121 5 is_stmt 1 view .LVU81
+ 311              		.loc 1 121 24 is_stmt 0 view .LVU82
+ 312 0012 7F21     		movs	r1, #127
+ 313 0014 D960     		str	r1, [r3, #12]
+ 122:Src/sensor.c  ****     sConfig.OffsetNumber = ADC_OFFSET_NONE;
+ 314              		.loc 1 122 5 is_stmt 1 view .LVU83
+ 315              		.loc 1 122 26 is_stmt 0 view .LVU84
+ 316 0016 1A61     		str	r2, [r3, #16]
+ 123:Src/sensor.c  ****     sConfig.Offset = 0;
+ 317              		.loc 1 123 5 is_stmt 1 view .LVU85
+ 318              		.loc 1 123 20 is_stmt 0 view .LVU86
+ 319 0018 0022     		movs	r2, #0
+ 320 001a 5A61     		str	r2, [r3, #20]
+ 124:Src/sensor.c  ****     first_time_up = 0;
+ 321              		.loc 1 124 5 is_stmt 1 view .LVU87
+ 322              		.loc 1 124 19 is_stmt 0 view .LVU88
+ 323 001c 174B     		ldr	r3, .L27
+ 324 001e 1A60     		str	r2, [r3]
+ 325              	.L21:
+ARM GAS  /tmp/cc7HG4xn.s 			page 9
+
+
+ 125:Src/sensor.c  ****   }
+ 126:Src/sensor.c  ****   sConfig.Rank = ADC_REGULAR_RANK_1;
+ 326              		.loc 1 126 3 is_stmt 1 view .LVU89
+ 327              		.loc 1 126 16 is_stmt 0 view .LVU90
+ 328 0020 1749     		ldr	r1, .L27+4
+ 329 0022 0623     		movs	r3, #6
+ 330 0024 4B60     		str	r3, [r1, #4]
+ 127:Src/sensor.c  ****   if (HAL_ADC_ConfigChannel(&hadc1, &sConfig) != HAL_OK) {
+ 331              		.loc 1 127 3 is_stmt 1 view .LVU91
+ 332              		.loc 1 127 7 is_stmt 0 view .LVU92
+ 333 0026 1848     		ldr	r0, .L27+12
+ 334 0028 FFF7FEFF 		bl	HAL_ADC_ConfigChannel
+ 335              	.LVL15:
+ 336              		.loc 1 127 6 view .LVU93
+ 337 002c F8B9     		cbnz	r0, .L25
+ 338              	.L22:
+ 128:Src/sensor.c  ****       Error_Handler();
+ 129:Src/sensor.c  ****   }
+ 130:Src/sensor.c  ****   HAL_ADC_Start(&hadc1); 
+ 339              		.loc 1 130 3 is_stmt 1 view .LVU94
+ 340 002e 164C     		ldr	r4, .L27+12
+ 341 0030 2046     		mov	r0, r4
+ 342 0032 FFF7FEFF 		bl	HAL_ADC_Start
+ 343              	.LVL16:
+ 131:Src/sensor.c  ****   HAL_ADC_PollForConversion(&hadc1, HAL_MAX_DELAY);
+ 344              		.loc 1 131 3 view .LVU95
+ 345 0036 4FF0FF31 		mov	r1, #-1
+ 346 003a 2046     		mov	r0, r4
+ 347 003c FFF7FEFF 		bl	HAL_ADC_PollForConversion
+ 348              	.LVL17:
+ 132:Src/sensor.c  ****   rawVintref = HAL_ADC_GetValue(&hadc1);
+ 349              		.loc 1 132 3 view .LVU96
+ 350              		.loc 1 132 16 is_stmt 0 view .LVU97
+ 351 0040 2046     		mov	r0, r4
+ 352 0042 FFF7FEFF 		bl	HAL_ADC_GetValue
+ 353              	.LVL18:
+ 354 0046 0546     		mov	r5, r0
+ 355              	.LVL19:
+ 133:Src/sensor.c  ****   HAL_ADC_Stop(&hadc1);
+ 356              		.loc 1 133 3 is_stmt 1 view .LVU98
+ 357 0048 2046     		mov	r0, r4
+ 358              	.LVL20:
+ 359              		.loc 1 133 3 is_stmt 0 view .LVU99
+ 360 004a FFF7FEFF 		bl	HAL_ADC_Stop
+ 361              	.LVL21:
+ 134:Src/sensor.c  ****   sConfig.Rank = ADC_REGULAR_RANK_2;
+ 362              		.loc 1 134 3 is_stmt 1 view .LVU100
+ 363              		.loc 1 134 16 is_stmt 0 view .LVU101
+ 364 004e 0C49     		ldr	r1, .L27+4
+ 365 0050 0C23     		movs	r3, #12
+ 366 0052 4B60     		str	r3, [r1, #4]
+ 135:Src/sensor.c  ****   if (HAL_ADC_ConfigChannel(&hadc1, &sConfig) != HAL_OK) {
+ 367              		.loc 1 135 3 is_stmt 1 view .LVU102
+ 368              		.loc 1 135 7 is_stmt 0 view .LVU103
+ 369 0054 2046     		mov	r0, r4
+ 370 0056 FFF7FEFF 		bl	HAL_ADC_ConfigChannel
+ 371              	.LVL22:
+ARM GAS  /tmp/cc7HG4xn.s 			page 10
+
+
+ 372              		.loc 1 135 6 view .LVU104
+ 373 005a 58B9     		cbnz	r0, .L26
+ 374              	.L23:
+ 136:Src/sensor.c  ****       Error_Handler();
+ 137:Src/sensor.c  ****   }
+ 138:Src/sensor.c  ****   return(__HAL_ADC_CALC_VREFANALOG_VOLTAGE(rawVintref, ADC_RESOLUTION_12B));
+ 375              		.loc 1 138 3 is_stmt 1 view .LVU105
+ 376              		.loc 1 138 10 is_stmt 0 view .LVU106
+ 377 005c 0B4B     		ldr	r3, .L27+16
+ 378 005e 1B88     		ldrh	r3, [r3]
+ 379 0060 40F6B830 		movw	r0, #3000
+ 380 0064 00FB03F0 		mul	r0, r0, r3
+ 139:Src/sensor.c  **** }
+ 381              		.loc 1 139 1 view .LVU107
+ 382 0068 B0FBF5F0 		udiv	r0, r0, r5
+ 383 006c 38BD     		pop	{r3, r4, r5, pc}
+ 384              	.LVL23:
+ 385              	.L25:
+ 128:Src/sensor.c  ****   }
+ 386              		.loc 1 128 7 is_stmt 1 view .LVU108
+ 387 006e FFF7FEFF 		bl	Error_Handler
+ 388              	.LVL24:
+ 389 0072 DCE7     		b	.L22
+ 390              	.LVL25:
+ 391              	.L26:
+ 136:Src/sensor.c  ****       Error_Handler();
+ 392              		.loc 1 136 7 view .LVU109
+ 393 0074 FFF7FEFF 		bl	Error_Handler
+ 394              	.LVL26:
+ 395 0078 F0E7     		b	.L23
+ 396              	.L28:
+ 397 007a 00BF     		.align	2
+ 398              	.L27:
+ 399 007c 00000000 		.word	.LANCHOR1
+ 400 0080 00000000 		.word	.LANCHOR2
+ 401 0084 01000080 		.word	-2147483647
+ 402 0088 00000000 		.word	hadc1
+ 403 008c AA75FF1F 		.word	536835498
+ 404              		.cfi_endproc
+ 405              	.LFE313:
+ 407              		.section	.text.read_temp,"ax",%progbits
+ 408              		.align	1
+ 409              		.global	read_temp
+ 410              		.syntax unified
+ 411              		.thumb
+ 412              		.thumb_func
+ 413              		.fpu fpv4-sp-d16
+ 415              	read_temp:
+ 416              	.LFB312:
+  77:Src/sensor.c  ****   static uint32_t first_time_up = 1;
+ 417              		.loc 1 77 26 view -0
+ 418              		.cfi_startproc
+ 419              		@ args = 0, pretend = 0, frame = 0
+ 420              		@ frame_needed = 0, uses_anonymous_args = 0
+ 421 0000 38B5     		push	{r3, r4, r5, lr}
+ 422              	.LCFI9:
+ 423              		.cfi_def_cfa_offset 16
+ARM GAS  /tmp/cc7HG4xn.s 			page 11
+
+
+ 424              		.cfi_offset 3, -16
+ 425              		.cfi_offset 4, -12
+ 426              		.cfi_offset 5, -8
+ 427              		.cfi_offset 14, -4
+  78:Src/sensor.c  ****   static ADC_ChannelConfTypeDef sConfig = {0};
+ 428              		.loc 1 78 3 view .LVU111
+  79:Src/sensor.c  ****   uint32_t rawTemp;
+ 429              		.loc 1 79 3 view .LVU112
+  80:Src/sensor.c  ****   uint32_t vref;
+ 430              		.loc 1 80 3 view .LVU113
+  81:Src/sensor.c  ****   uint32_t temp;
+ 431              		.loc 1 81 3 view .LVU114
+  82:Src/sensor.c  ****     
+ 432              		.loc 1 82 3 view .LVU115
+  84:Src/sensor.c  ****     sConfig.Channel = ADC_CHANNEL_TEMPSENSOR;
+ 433              		.loc 1 84 3 view .LVU116
+  84:Src/sensor.c  ****     sConfig.Channel = ADC_CHANNEL_TEMPSENSOR;
+ 434              		.loc 1 84 7 is_stmt 0 view .LVU117
+ 435 0002 1F4B     		ldr	r3, .L34
+ 436 0004 1B68     		ldr	r3, [r3]
+  84:Src/sensor.c  ****     sConfig.Channel = ADC_CHANNEL_TEMPSENSOR;
+ 437              		.loc 1 84 6 view .LVU118
+ 438 0006 5BB1     		cbz	r3, .L30
+  85:Src/sensor.c  ****     sConfig.Rank = ADC_REGULAR_RANK_1;
+ 439              		.loc 1 85 5 is_stmt 1 view .LVU119
+  85:Src/sensor.c  ****     sConfig.Rank = ADC_REGULAR_RANK_1;
+ 440              		.loc 1 85 21 is_stmt 0 view .LVU120
+ 441 0008 1E4B     		ldr	r3, .L34+4
+ 442 000a 1F4A     		ldr	r2, .L34+8
+ 443 000c 1A60     		str	r2, [r3]
+  86:Src/sensor.c  ****     sConfig.SamplingTime = ADC_SAMPLETIME_47CYCLES_5;
+ 444              		.loc 1 86 5 is_stmt 1 view .LVU121
+  87:Src/sensor.c  ****     sConfig.SingleDiff = ADC_SINGLE_ENDED;
+ 445              		.loc 1 87 5 view .LVU122
+  87:Src/sensor.c  ****     sConfig.SingleDiff = ADC_SINGLE_ENDED;
+ 446              		.loc 1 87 26 is_stmt 0 view .LVU123
+ 447 000e 0422     		movs	r2, #4
+ 448 0010 9A60     		str	r2, [r3, #8]
+  88:Src/sensor.c  ****     sConfig.OffsetNumber = ADC_OFFSET_NONE;
+ 449              		.loc 1 88 5 is_stmt 1 view .LVU124
+  88:Src/sensor.c  ****     sConfig.OffsetNumber = ADC_OFFSET_NONE;
+ 450              		.loc 1 88 24 is_stmt 0 view .LVU125
+ 451 0012 7F21     		movs	r1, #127
+ 452 0014 D960     		str	r1, [r3, #12]
+  89:Src/sensor.c  ****     sConfig.Offset = 0;
+ 453              		.loc 1 89 5 is_stmt 1 view .LVU126
+  89:Src/sensor.c  ****     sConfig.Offset = 0;
+ 454              		.loc 1 89 26 is_stmt 0 view .LVU127
+ 455 0016 1A61     		str	r2, [r3, #16]
+  90:Src/sensor.c  ****     first_time_up = 0;
+ 456              		.loc 1 90 5 is_stmt 1 view .LVU128
+  90:Src/sensor.c  ****     first_time_up = 0;
+ 457              		.loc 1 90 20 is_stmt 0 view .LVU129
+ 458 0018 0022     		movs	r2, #0
+ 459 001a 5A61     		str	r2, [r3, #20]
+  91:Src/sensor.c  ****   }
+ 460              		.loc 1 91 5 is_stmt 1 view .LVU130
+ARM GAS  /tmp/cc7HG4xn.s 			page 12
+
+
+  91:Src/sensor.c  ****   }
+ 461              		.loc 1 91 19 is_stmt 0 view .LVU131
+ 462 001c 184B     		ldr	r3, .L34
+ 463 001e 1A60     		str	r2, [r3]
+ 464              	.L30:
+  93:Src/sensor.c  ****   if (HAL_ADC_ConfigChannel(&hadc1, &sConfig) != HAL_OK) {
+ 465              		.loc 1 93 3 is_stmt 1 view .LVU132
+  93:Src/sensor.c  ****   if (HAL_ADC_ConfigChannel(&hadc1, &sConfig) != HAL_OK) {
+ 466              		.loc 1 93 16 is_stmt 0 view .LVU133
+ 467 0020 1849     		ldr	r1, .L34+4
+ 468 0022 0623     		movs	r3, #6
+ 469 0024 4B60     		str	r3, [r1, #4]
+  94:Src/sensor.c  ****       Error_Handler();
+ 470              		.loc 1 94 3 is_stmt 1 view .LVU134
+  94:Src/sensor.c  ****       Error_Handler();
+ 471              		.loc 1 94 7 is_stmt 0 view .LVU135
+ 472 0026 1948     		ldr	r0, .L34+12
+ 473 0028 FFF7FEFF 		bl	HAL_ADC_ConfigChannel
+ 474              	.LVL27:
+  94:Src/sensor.c  ****       Error_Handler();
+ 475              		.loc 1 94 6 view .LVU136
+ 476 002c 20BB     		cbnz	r0, .L33
+ 477              	.L31:
+  97:Src/sensor.c  ****   HAL_ADC_PollForConversion(&hadc1, HAL_MAX_DELAY);
+ 478              		.loc 1 97 3 is_stmt 1 view .LVU137
+ 479 002e 174C     		ldr	r4, .L34+12
+ 480 0030 2046     		mov	r0, r4
+ 481 0032 FFF7FEFF 		bl	HAL_ADC_Start
+ 482              	.LVL28:
+  98:Src/sensor.c  ****   rawTemp = HAL_ADC_GetValue(&hadc1);
+ 483              		.loc 1 98 3 view .LVU138
+ 484 0036 4FF0FF31 		mov	r1, #-1
+ 485 003a 2046     		mov	r0, r4
+ 486 003c FFF7FEFF 		bl	HAL_ADC_PollForConversion
+ 487              	.LVL29:
+  99:Src/sensor.c  ****   HAL_ADC_Stop(&hadc1);
+ 488              		.loc 1 99 3 view .LVU139
+  99:Src/sensor.c  ****   HAL_ADC_Stop(&hadc1);
+ 489              		.loc 1 99 13 is_stmt 0 view .LVU140
+ 490 0040 2046     		mov	r0, r4
+ 491 0042 FFF7FEFF 		bl	HAL_ADC_GetValue
+ 492              	.LVL30:
+ 493 0046 0546     		mov	r5, r0
+ 494              	.LVL31:
+ 100:Src/sensor.c  ****   /* sConfig.Rank = ADC_REGULAR_RANK_2; */
+ 495              		.loc 1 100 3 is_stmt 1 view .LVU141
+ 496 0048 2046     		mov	r0, r4
+ 497              	.LVL32:
+ 100:Src/sensor.c  ****   /* sConfig.Rank = ADC_REGULAR_RANK_2; */
+ 498              		.loc 1 100 3 is_stmt 0 view .LVU142
+ 499 004a FFF7FEFF 		bl	HAL_ADC_Stop
+ 500              	.LVL33:
+ 105:Src/sensor.c  ****   temp = (__HAL_ADC_CALC_TEMPERATURE(vref,
+ 501              		.loc 1 105 3 is_stmt 1 view .LVU143
+ 105:Src/sensor.c  ****   temp = (__HAL_ADC_CALC_TEMPERATURE(vref,
+ 502              		.loc 1 105 10 is_stmt 0 view .LVU144
+ 503 004e FFF7FEFF 		bl	read_vrefint
+ARM GAS  /tmp/cc7HG4xn.s 			page 13
+
+
+ 504              	.LVL34:
+ 106:Src/sensor.c  ****                                      rawTemp,
+ 505              		.loc 1 106 3 is_stmt 1 view .LVU145
+ 106:Src/sensor.c  ****                                      rawTemp,
+ 506              		.loc 1 106 11 is_stmt 0 view .LVU146
+ 507 0052 00FB05F0 		mul	r0, r0, r5
+ 508              	.LVL35:
+ 106:Src/sensor.c  ****                                      rawTemp,
+ 509              		.loc 1 106 11 view .LVU147
+ 510 0056 0E4B     		ldr	r3, .L34+16
+ 511 0058 A3FB0030 		umull	r3, r0, r3, r0
+ 512 005c 0D4B     		ldr	r3, .L34+20
+ 513 005e 1A88     		ldrh	r2, [r3]
+ 514 0060 C2EB9010 		rsb	r0, r2, r0, lsr #6
+ 515 0064 6423     		movs	r3, #100
+ 516 0066 03FB00F0 		mul	r0, r3, r0
+ 517 006a 0B4B     		ldr	r3, .L34+24
+ 518 006c 1B88     		ldrh	r3, [r3]
+ 519 006e 9B1A     		subs	r3, r3, r2
+ 520 0070 90FBF3F0 		sdiv	r0, r0, r3
+ 521              	.LVL36:
+ 109:Src/sensor.c  **** }
+ 522              		.loc 1 109 3 is_stmt 1 view .LVU148
+ 110:Src/sensor.c  **** 
+ 523              		.loc 1 110 1 is_stmt 0 view .LVU149
+ 524 0074 1E30     		adds	r0, r0, #30
+ 525              	.LVL37:
+ 110:Src/sensor.c  **** 
+ 526              		.loc 1 110 1 view .LVU150
+ 527 0076 38BD     		pop	{r3, r4, r5, pc}
+ 528              	.LVL38:
+ 529              	.L33:
+  95:Src/sensor.c  ****   }
+ 530              		.loc 1 95 7 is_stmt 1 view .LVU151
+ 531 0078 FFF7FEFF 		bl	Error_Handler
+ 532              	.LVL39:
+ 533 007c D7E7     		b	.L31
+ 534              	.L35:
+ 535 007e 00BF     		.align	2
+ 536              	.L34:
+ 537 0080 00000000 		.word	.LANCHOR3
+ 538 0084 00000000 		.word	.LANCHOR4
+ 539 0088 000052C7 		.word	-950927360
+ 540 008c 00000000 		.word	hadc1
+ 541 0090 F1197605 		.word	91625969
+ 542 0094 A875FF1F 		.word	536835496
+ 543 0098 CA75FF1F 		.word	536835530
+ 544              		.cfi_endproc
+ 545              	.LFE312:
+ 547              		.global	captureDone
+ 548              		.section	.bss.captureDone,"aw",%nobits
+ 549              		.set	.LANCHOR0,. + 0
+ 552              	captureDone:
+ 553 0000 00       		.space	1
+ 554              		.section	.bss.sConfig.11656,"aw",%nobits
+ 555              		.align	2
+ 556              		.set	.LANCHOR4,. + 0
+ARM GAS  /tmp/cc7HG4xn.s 			page 14
+
+
+ 559              	sConfig.11656:
+ 560 0000 00000000 		.space	24
+ 560      00000000 
+ 560      00000000 
+ 560      00000000 
+ 560      00000000 
+ 561              		.section	.bss.sConfig.11664,"aw",%nobits
+ 562              		.align	2
+ 563              		.set	.LANCHOR2,. + 0
+ 566              	sConfig.11664:
+ 567 0000 00000000 		.space	24
+ 567      00000000 
+ 567      00000000 
+ 567      00000000 
+ 567      00000000 
+ 568              		.section	.data.first_time_up.11655,"aw"
+ 569              		.align	2
+ 570              		.set	.LANCHOR3,. + 0
+ 573              	first_time_up.11655:
+ 574 0000 01000000 		.word	1
+ 575              		.section	.data.first_time_up.11663,"aw"
+ 576              		.align	2
+ 577              		.set	.LANCHOR1,. + 0
+ 580              	first_time_up.11663:
+ 581 0000 01000000 		.word	1
+ 582              		.text
+ 583              	.Letext0:
+ 584              		.file 2 "/nfs/nfs5/home/research/hardware/arm2/gcc-arm-embedded/gcc-arm-none-eabi-9-2019-q4-major/
+ 585              		.file 3 "/nfs/nfs5/home/research/hardware/arm2/gcc-arm-embedded/gcc-arm-none-eabi-9-2019-q4-major/
+ 586              		.file 4 "/nfs/nfs5/home/research/hardware/arm2/gcc-arm-embedded/gcc-arm-none-eabi-9-2019-q4-major/
+ 587              		.file 5 "/nfs/nfs5/home/research/hardware/arm2/gcc-arm-embedded/gcc-arm-none-eabi-9-2019-q4-major/
+ 588              		.file 6 "/nfs/nfs5/home/research/hardware/arm2/gcc-arm-embedded/gcc-arm-none-eabi-9-2019-q4-major/
+ 589              		.file 7 "/nfs/nfs5/home/research/hardware/arm2/gcc-arm-embedded/gcc-arm-none-eabi-9-2019-q4-major/
+ 590              		.file 8 "/nfs/nfs5/home/research/hardware/arm2/gcc-arm-embedded/gcc-arm-none-eabi-9-2019-q4-major/
+ 591              		.file 9 "/nfs/nfs5/home/research/hardware/arm2/gcc-arm-embedded/gcc-arm-none-eabi-9-2019-q4-major/
+ 592              		.file 10 "Drivers/CMSIS/Include/core_cm4.h"
+ 593              		.file 11 "Drivers/CMSIS/Device/ST/STM32L4xx/Include/system_stm32l4xx.h"
+ 594              		.file 12 "Drivers/CMSIS/Device/ST/STM32L4xx/Include/stm32l432xx.h"
+ 595              		.file 13 "Drivers/CMSIS/Device/ST/STM32L4xx/Include/stm32l4xx.h"
+ 596              		.file 14 "Drivers/STM32L4xx_HAL_Driver/Inc/stm32l4xx_hal_def.h"
+ 597              		.file 15 "Drivers/STM32L4xx_HAL_Driver/Inc/stm32l4xx_hal_dma.h"
+ 598              		.file 16 "Drivers/STM32L4xx_HAL_Driver/Inc/stm32l4xx_hal_adc.h"
+ 599              		.file 17 "Drivers/STM32L4xx_HAL_Driver/Inc/stm32l4xx_hal_flash.h"
+ 600              		.file 18 "Drivers/STM32L4xx_HAL_Driver/Inc/stm32l4xx_hal_tim.h"
+ 601              		.file 19 "Drivers/STM32L4xx_HAL_Driver/Inc/stm32l4xx_hal.h"
+ 602              		.file 20 "/nfs/nfs5/home/research/hardware/arm2/gcc-arm-embedded/gcc-arm-none-eabi-9-2019-q4-major
+ 603              		.file 21 "Inc/main.h"
+ 604              		.file 22 "Drivers/STM32L4xx_HAL_Driver/Inc/stm32l4xx_hal_rcc.h"
+ARM GAS  /tmp/cc7HG4xn.s 			page 15
+
+
+DEFINED SYMBOLS
+                            *ABS*:0000000000000000 sensor.c
+     /tmp/cc7HG4xn.s:18     .text.calculate_freq:0000000000000000 $t
+     /tmp/cc7HG4xn.s:26     .text.calculate_freq:0000000000000000 calculate_freq
+     /tmp/cc7HG4xn.s:133    .text.calculate_freq:000000000000005c $d
+     /tmp/cc7HG4xn.s:139    .text.calculate_period:0000000000000000 $t
+     /tmp/cc7HG4xn.s:146    .text.calculate_period:0000000000000000 calculate_period
+     /tmp/cc7HG4xn.s:225    .text.calculate_period:000000000000003c $d
+     /tmp/cc7HG4xn.s:231    .text.HAL_TIM_IC_CaptureCallback:0000000000000000 $t
+     /tmp/cc7HG4xn.s:238    .text.HAL_TIM_IC_CaptureCallback:0000000000000000 HAL_TIM_IC_CaptureCallback
+     /tmp/cc7HG4xn.s:266    .text.HAL_TIM_IC_CaptureCallback:0000000000000010 $d
+     /tmp/cc7HG4xn.s:271    .text.read_vrefint:0000000000000000 $t
+     /tmp/cc7HG4xn.s:278    .text.read_vrefint:0000000000000000 read_vrefint
+     /tmp/cc7HG4xn.s:399    .text.read_vrefint:000000000000007c $d
+     /tmp/cc7HG4xn.s:408    .text.read_temp:0000000000000000 $t
+     /tmp/cc7HG4xn.s:415    .text.read_temp:0000000000000000 read_temp
+     /tmp/cc7HG4xn.s:537    .text.read_temp:0000000000000080 $d
+     /tmp/cc7HG4xn.s:552    .bss.captureDone:0000000000000000 captureDone
+     /tmp/cc7HG4xn.s:553    .bss.captureDone:0000000000000000 $d
+     /tmp/cc7HG4xn.s:555    .bss.sConfig.11656:0000000000000000 $d
+     /tmp/cc7HG4xn.s:559    .bss.sConfig.11656:0000000000000000 sConfig.11656
+     /tmp/cc7HG4xn.s:562    .bss.sConfig.11664:0000000000000000 $d
+     /tmp/cc7HG4xn.s:566    .bss.sConfig.11664:0000000000000000 sConfig.11664
+     /tmp/cc7HG4xn.s:569    .data.first_time_up.11655:0000000000000000 $d
+     /tmp/cc7HG4xn.s:573    .data.first_time_up.11655:0000000000000000 first_time_up.11655
+     /tmp/cc7HG4xn.s:576    .data.first_time_up.11663:0000000000000000 $d
+     /tmp/cc7HG4xn.s:580    .data.first_time_up.11663:0000000000000000 first_time_up.11663
+
+UNDEFINED SYMBOLS
+HAL_TIM_IC_Start_DMA
+HAL_RCC_GetHCLKFreq
+htim2
+HAL_ADC_ConfigChannel
+HAL_ADC_Start
+HAL_ADC_PollForConversion
+HAL_ADC_GetValue
+HAL_ADC_Stop
+Error_Handler
+hadc1

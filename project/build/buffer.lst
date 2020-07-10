@@ -1,0 +1,496 @@
+ARM GAS  /tmp/ccXllfKY.s 			page 1
+
+
+   1              		.cpu cortex-m4
+   2              		.eabi_attribute 27, 1
+   3              		.eabi_attribute 28, 1
+   4              		.eabi_attribute 20, 1
+   5              		.eabi_attribute 21, 1
+   6              		.eabi_attribute 23, 3
+   7              		.eabi_attribute 24, 1
+   8              		.eabi_attribute 25, 1
+   9              		.eabi_attribute 26, 1
+  10              		.eabi_attribute 30, 1
+  11              		.eabi_attribute 34, 1
+  12              		.eabi_attribute 18, 4
+  13              		.file	"buffer.c"
+  14              		.text
+  15              	.Ltext0:
+  16              		.cfi_sections	.debug_frame
+  17              		.section	.text.buf_enqueue,"ax",%progbits
+  18              		.align	1
+  19              		.global	buf_enqueue
+  20              		.arch armv7e-m
+  21              		.syntax unified
+  22              		.thumb
+  23              		.thumb_func
+  24              		.fpu fpv4-sp-d16
+  26              	buf_enqueue:
+  27              	.LVL0:
+  28              	.LFB287:
+  29              		.file 1 "Src/buffer.c"
+   1:Src/buffer.c  **** #include <stdio.h>
+   2:Src/buffer.c  **** #include <stdlib.h>
+   3:Src/buffer.c  **** #include "main.h"
+   4:Src/buffer.c  **** #include "command.h"
+   5:Src/buffer.c  **** #include "rtc.h"
+   6:Src/buffer.c  **** 
+   7:Src/buffer.c  **** uint8_t buf[BUF_SIZE];
+   8:Src/buffer.c  **** uint8_t recv;
+   9:Src/buffer.c  **** uint8_t pos = 0;
+  10:Src/buffer.c  **** 
+  11:Src/buffer.c  **** void buf_enqueue(uint8_t c){
+  30              		.loc 1 11 28 view -0
+  31              		.cfi_startproc
+  32              		@ args = 0, pretend = 0, frame = 0
+  33              		@ frame_needed = 0, uses_anonymous_args = 0
+  34              		@ link register save eliminated.
+  12:Src/buffer.c  ****   recv = c;
+  35              		.loc 1 12 3 view .LVU1
+  36              		.loc 1 12 8 is_stmt 0 view .LVU2
+  37 0000 014B     		ldr	r3, .L2
+  38 0002 1870     		strb	r0, [r3]
+  13:Src/buffer.c  **** }
+  39              		.loc 1 13 1 view .LVU3
+  40 0004 7047     		bx	lr
+  41              	.L3:
+  42 0006 00BF     		.align	2
+  43              	.L2:
+  44 0008 00000000 		.word	recv
+  45              		.cfi_endproc
+ARM GAS  /tmp/ccXllfKY.s 			page 2
+
+
+  46              	.LFE287:
+  48              		.section	.rodata.buf_dequeue.str1.4,"aMS",%progbits,1
+  49              		.align	2
+  50              	.LC0:
+  51 0000 08200800 		.ascii	"\010 \010\000"
+  52              		.section	.text.buf_dequeue,"ax",%progbits
+  53              		.align	1
+  54              		.global	buf_dequeue
+  55              		.syntax unified
+  56              		.thumb
+  57              		.thumb_func
+  58              		.fpu fpv4-sp-d16
+  60              	buf_dequeue:
+  61              	.LFB288:
+  14:Src/buffer.c  **** 
+  15:Src/buffer.c  **** void buf_dequeue(){
+  62              		.loc 1 15 19 is_stmt 1 view -0
+  63              		.cfi_startproc
+  64              		@ args = 0, pretend = 0, frame = 0
+  65              		@ frame_needed = 0, uses_anonymous_args = 0
+  66 0000 08B5     		push	{r3, lr}
+  67              	.LCFI0:
+  68              		.cfi_def_cfa_offset 8
+  69              		.cfi_offset 3, -8
+  70              		.cfi_offset 14, -4
+  16:Src/buffer.c  ****   if(pos < 1){
+  71              		.loc 1 16 3 view .LVU5
+  72              		.loc 1 16 10 is_stmt 0 view .LVU6
+  73 0002 074B     		ldr	r3, .L8
+  74 0004 1B78     		ldrb	r3, [r3]	@ zero_extendqisi2
+  75              		.loc 1 16 5 view .LVU7
+  76 0006 1BB9     		cbnz	r3, .L5
+  17:Src/buffer.c  ****     pos = 0;
+  77              		.loc 1 17 5 is_stmt 1 view .LVU8
+  78              		.loc 1 17 9 is_stmt 0 view .LVU9
+  79 0008 054B     		ldr	r3, .L8
+  80 000a 0022     		movs	r2, #0
+  81 000c 1A70     		strb	r2, [r3]
+  18:Src/buffer.c  ****     return;
+  82              		.loc 1 18 5 is_stmt 1 view .LVU10
+  83              	.L4:
+  19:Src/buffer.c  ****   }
+  20:Src/buffer.c  ****   printf("\b \b");
+  21:Src/buffer.c  ****   pos -= 1;
+  22:Src/buffer.c  **** }
+  84              		.loc 1 22 1 is_stmt 0 view .LVU11
+  85 000e 08BD     		pop	{r3, pc}
+  86              	.L5:
+  20:Src/buffer.c  ****   pos -= 1;
+  87              		.loc 1 20 3 is_stmt 1 view .LVU12
+  88 0010 0448     		ldr	r0, .L8+4
+  89 0012 FFF7FEFF 		bl	printf
+  90              	.LVL1:
+  21:Src/buffer.c  **** }
+  91              		.loc 1 21 3 view .LVU13
+  21:Src/buffer.c  **** }
+  92              		.loc 1 21 7 is_stmt 0 view .LVU14
+ARM GAS  /tmp/ccXllfKY.s 			page 3
+
+
+  93 0016 024A     		ldr	r2, .L8
+  94 0018 1378     		ldrb	r3, [r2]	@ zero_extendqisi2
+  95 001a 013B     		subs	r3, r3, #1
+  96 001c 1370     		strb	r3, [r2]
+  97 001e F6E7     		b	.L4
+  98              	.L9:
+  99              		.align	2
+ 100              	.L8:
+ 101 0020 00000000 		.word	.LANCHOR0
+ 102 0024 00000000 		.word	.LC0
+ 103              		.cfi_endproc
+ 104              	.LFE288:
+ 106              		.section	.rodata.terminal_line.str1.4,"aMS",%progbits,1
+ 107              		.align	2
+ 108              	.LC1:
+ 109 0000 25732049 		.ascii	"%s IULS> \000"
+ 109      554C533E 
+ 109      2000
+ 110              		.section	.text.terminal_line,"ax",%progbits
+ 111              		.align	1
+ 112              		.global	terminal_line
+ 113              		.syntax unified
+ 114              		.thumb
+ 115              		.thumb_func
+ 116              		.fpu fpv4-sp-d16
+ 118              	terminal_line:
+ 119              	.LFB290:
+  23:Src/buffer.c  **** 
+  24:Src/buffer.c  **** void buf_process(){
+  25:Src/buffer.c  ****   if(recv != 0){
+  26:Src/buffer.c  ****     if(pos == BUF_SIZE-1 && recv != 0x7f){
+  27:Src/buffer.c  ****       printf("\nReached end of buffer, overwriting.\r\n");
+  28:Src/buffer.c  ****       pos = 0;
+  29:Src/buffer.c  ****       terminal_line();
+  30:Src/buffer.c  ****       recv = 0;
+  31:Src/buffer.c  ****       return;
+  32:Src/buffer.c  ****     }
+  33:Src/buffer.c  **** 
+  34:Src/buffer.c  ****     if(recv == 0x7f){
+  35:Src/buffer.c  ****       buf_dequeue();
+  36:Src/buffer.c  ****     }else if(recv == 0x0d){
+  37:Src/buffer.c  ****       printf("\r\n");
+  38:Src/buffer.c  ****       buf[pos] = '\0';
+  39:Src/buffer.c  ****       if(execute_command(buf) == -2)
+  40:Src/buffer.c  ****         printf("NOK (invalid command: %s)\r\n", buf);
+  41:Src/buffer.c  ****       pos = 0;
+  42:Src/buffer.c  ****       terminal_line();
+  43:Src/buffer.c  ****     }else{
+  44:Src/buffer.c  ****       buf[pos] = recv;
+  45:Src/buffer.c  ****       pos++;
+  46:Src/buffer.c  ****       printf("%c", recv);
+  47:Src/buffer.c  ****     }
+  48:Src/buffer.c  ****     
+  49:Src/buffer.c  ****     recv = 0;
+  50:Src/buffer.c  ****   }
+  51:Src/buffer.c  **** }
+  52:Src/buffer.c  **** 
+ARM GAS  /tmp/ccXllfKY.s 			page 4
+
+
+  53:Src/buffer.c  **** 
+  54:Src/buffer.c  **** void terminal_line() {
+ 120              		.loc 1 54 22 is_stmt 1 view -0
+ 121              		.cfi_startproc
+ 122              		@ args = 0, pretend = 0, frame = 0
+ 123              		@ frame_needed = 0, uses_anonymous_args = 0
+ 124 0000 10B5     		push	{r4, lr}
+ 125              	.LCFI1:
+ 126              		.cfi_def_cfa_offset 8
+ 127              		.cfi_offset 4, -8
+ 128              		.cfi_offset 14, -4
+  55:Src/buffer.c  ****   char* td = get_td();
+ 129              		.loc 1 55 3 view .LVU16
+ 130              		.loc 1 55 14 is_stmt 0 view .LVU17
+ 131 0002 FFF7FEFF 		bl	get_td
+ 132              	.LVL2:
+ 133 0006 0446     		mov	r4, r0
+ 134              	.LVL3:
+  56:Src/buffer.c  ****   printf("%s IULS> ", td);
+ 135              		.loc 1 56 3 is_stmt 1 view .LVU18
+ 136 0008 0146     		mov	r1, r0
+ 137 000a 0348     		ldr	r0, .L12
+ 138              	.LVL4:
+ 139              		.loc 1 56 3 is_stmt 0 view .LVU19
+ 140 000c FFF7FEFF 		bl	printf
+ 141              	.LVL5:
+  57:Src/buffer.c  ****   free(td);
+ 142              		.loc 1 57 3 is_stmt 1 view .LVU20
+ 143 0010 2046     		mov	r0, r4
+ 144 0012 FFF7FEFF 		bl	free
+ 145              	.LVL6:
+  58:Src/buffer.c  **** }
+ 146              		.loc 1 58 1 is_stmt 0 view .LVU21
+ 147 0016 10BD     		pop	{r4, pc}
+ 148              	.LVL7:
+ 149              	.L13:
+ 150              		.loc 1 58 1 view .LVU22
+ 151              		.align	2
+ 152              	.L12:
+ 153 0018 00000000 		.word	.LC1
+ 154              		.cfi_endproc
+ 155              	.LFE290:
+ 157              		.section	.rodata.buf_process.str1.4,"aMS",%progbits,1
+ 158              		.align	2
+ 159              	.LC2:
+ 160 0000 0A526561 		.ascii	"\012Reached end of buffer, overwriting.\015\000"
+ 160      63686564 
+ 160      20656E64 
+ 160      206F6620 
+ 160      62756666 
+ 161 0026 0000     		.align	2
+ 162              	.LC3:
+ 163 0028 0D00     		.ascii	"\015\000"
+ 164 002a 0000     		.align	2
+ 165              	.LC4:
+ 166 002c 4E4F4B20 		.ascii	"NOK (invalid command: %s)\015\012\000"
+ 166      28696E76 
+ARM GAS  /tmp/ccXllfKY.s 			page 5
+
+
+ 166      616C6964 
+ 166      20636F6D 
+ 166      6D616E64 
+ 167              		.section	.text.buf_process,"ax",%progbits
+ 168              		.align	1
+ 169              		.global	buf_process
+ 170              		.syntax unified
+ 171              		.thumb
+ 172              		.thumb_func
+ 173              		.fpu fpv4-sp-d16
+ 175              	buf_process:
+ 176              	.LFB289:
+  24:Src/buffer.c  ****   if(recv != 0){
+ 177              		.loc 1 24 19 is_stmt 1 view -0
+ 178              		.cfi_startproc
+ 179              		@ args = 0, pretend = 0, frame = 0
+ 180              		@ frame_needed = 0, uses_anonymous_args = 0
+  25:Src/buffer.c  ****     if(pos == BUF_SIZE-1 && recv != 0x7f){
+ 181              		.loc 1 25 3 view .LVU24
+  25:Src/buffer.c  ****     if(pos == BUF_SIZE-1 && recv != 0x7f){
+ 182              		.loc 1 25 11 is_stmt 0 view .LVU25
+ 183 0000 204B     		ldr	r3, .L29
+ 184 0002 1878     		ldrb	r0, [r3]	@ zero_extendqisi2
+  25:Src/buffer.c  ****     if(pos == BUF_SIZE-1 && recv != 0x7f){
+ 185              		.loc 1 25 5 view .LVU26
+ 186 0004 0028     		cmp	r0, #0
+ 187 0006 3BD0     		beq	.L22
+  24:Src/buffer.c  ****   if(recv != 0){
+ 188              		.loc 1 24 19 view .LVU27
+ 189 0008 10B5     		push	{r4, lr}
+ 190              	.LCFI2:
+ 191              		.cfi_def_cfa_offset 8
+ 192              		.cfi_offset 4, -8
+ 193              		.cfi_offset 14, -4
+  26:Src/buffer.c  ****       printf("\nReached end of buffer, overwriting.\r\n");
+ 194              		.loc 1 26 5 is_stmt 1 view .LVU28
+  26:Src/buffer.c  ****       printf("\nReached end of buffer, overwriting.\r\n");
+ 195              		.loc 1 26 12 is_stmt 0 view .LVU29
+ 196 000a 1F4B     		ldr	r3, .L29+4
+ 197 000c 1B78     		ldrb	r3, [r3]	@ zero_extendqisi2
+  26:Src/buffer.c  ****       printf("\nReached end of buffer, overwriting.\r\n");
+ 198              		.loc 1 26 7 view .LVU30
+ 199 000e 272B     		cmp	r3, #39
+ 200 0010 0ED0     		beq	.L25
+ 201              	.L16:
+  34:Src/buffer.c  ****       buf_dequeue();
+ 202              		.loc 1 34 5 is_stmt 1 view .LVU31
+  34:Src/buffer.c  ****       buf_dequeue();
+ 203              		.loc 1 34 7 is_stmt 0 view .LVU32
+ 204 0012 7F28     		cmp	r0, #127
+ 205 0014 19D0     		beq	.L26
+  36:Src/buffer.c  ****       printf("\r\n");
+ 206              		.loc 1 36 11 is_stmt 1 view .LVU33
+  36:Src/buffer.c  ****       printf("\r\n");
+ 207              		.loc 1 36 13 is_stmt 0 view .LVU34
+ 208 0016 0D28     		cmp	r0, #13
+ 209 0018 1AD0     		beq	.L27
+ARM GAS  /tmp/ccXllfKY.s 			page 6
+
+
+  44:Src/buffer.c  ****       pos++;
+ 210              		.loc 1 44 7 is_stmt 1 view .LVU35
+  44:Src/buffer.c  ****       pos++;
+ 211              		.loc 1 44 16 is_stmt 0 view .LVU36
+ 212 001a 1C4A     		ldr	r2, .L29+8
+ 213 001c D054     		strb	r0, [r2, r3]
+  45:Src/buffer.c  ****       printf("%c", recv);
+ 214              		.loc 1 45 7 is_stmt 1 view .LVU37
+  45:Src/buffer.c  ****       printf("%c", recv);
+ 215              		.loc 1 45 10 is_stmt 0 view .LVU38
+ 216 001e 0133     		adds	r3, r3, #1
+ 217 0020 194A     		ldr	r2, .L29+4
+ 218 0022 1370     		strb	r3, [r2]
+  46:Src/buffer.c  ****     }
+ 219              		.loc 1 46 7 is_stmt 1 view .LVU39
+ 220 0024 FFF7FEFF 		bl	putchar
+ 221              	.LVL8:
+ 222              	.L18:
+  49:Src/buffer.c  ****   }
+ 223              		.loc 1 49 5 view .LVU40
+  49:Src/buffer.c  ****   }
+ 224              		.loc 1 49 10 is_stmt 0 view .LVU41
+ 225 0028 164B     		ldr	r3, .L29
+ 226 002a 0022     		movs	r2, #0
+ 227 002c 1A70     		strb	r2, [r3]
+ 228              	.L14:
+  51:Src/buffer.c  **** 
+ 229              		.loc 1 51 1 view .LVU42
+ 230 002e 10BD     		pop	{r4, pc}
+ 231              	.L25:
+  26:Src/buffer.c  ****       printf("\nReached end of buffer, overwriting.\r\n");
+ 232              		.loc 1 26 26 discriminator 1 view .LVU43
+ 233 0030 7F28     		cmp	r0, #127
+ 234 0032 EED0     		beq	.L16
+  27:Src/buffer.c  ****       pos = 0;
+ 235              		.loc 1 27 7 is_stmt 1 view .LVU44
+ 236 0034 1648     		ldr	r0, .L29+12
+ 237 0036 FFF7FEFF 		bl	puts
+ 238              	.LVL9:
+  28:Src/buffer.c  ****       terminal_line();
+ 239              		.loc 1 28 7 view .LVU45
+  28:Src/buffer.c  ****       terminal_line();
+ 240              		.loc 1 28 11 is_stmt 0 view .LVU46
+ 241 003a 0024     		movs	r4, #0
+ 242 003c 124B     		ldr	r3, .L29+4
+ 243 003e 1C70     		strb	r4, [r3]
+  29:Src/buffer.c  ****       recv = 0;
+ 244              		.loc 1 29 7 is_stmt 1 view .LVU47
+ 245 0040 FFF7FEFF 		bl	terminal_line
+ 246              	.LVL10:
+  30:Src/buffer.c  ****       return;
+ 247              		.loc 1 30 7 view .LVU48
+  30:Src/buffer.c  ****       return;
+ 248              		.loc 1 30 12 is_stmt 0 view .LVU49
+ 249 0044 0F4B     		ldr	r3, .L29
+ 250 0046 1C70     		strb	r4, [r3]
+  31:Src/buffer.c  ****     }
+ARM GAS  /tmp/ccXllfKY.s 			page 7
+
+
+ 251              		.loc 1 31 7 is_stmt 1 view .LVU50
+ 252 0048 F1E7     		b	.L14
+ 253              	.L26:
+  35:Src/buffer.c  ****     }else if(recv == 0x0d){
+ 254              		.loc 1 35 7 view .LVU51
+ 255 004a FFF7FEFF 		bl	buf_dequeue
+ 256              	.LVL11:
+ 257 004e EBE7     		b	.L18
+ 258              	.L27:
+  37:Src/buffer.c  ****       buf[pos] = '\0';
+ 259              		.loc 1 37 7 view .LVU52
+ 260 0050 1048     		ldr	r0, .L29+16
+ 261 0052 FFF7FEFF 		bl	puts
+ 262              	.LVL12:
+  38:Src/buffer.c  ****       if(execute_command(buf) == -2)
+ 263              		.loc 1 38 7 view .LVU53
+  38:Src/buffer.c  ****       if(execute_command(buf) == -2)
+ 264              		.loc 1 38 10 is_stmt 0 view .LVU54
+ 265 0056 0C4B     		ldr	r3, .L29+4
+ 266 0058 1B78     		ldrb	r3, [r3]	@ zero_extendqisi2
+  38:Src/buffer.c  ****       if(execute_command(buf) == -2)
+ 267              		.loc 1 38 16 view .LVU55
+ 268 005a 0C48     		ldr	r0, .L29+8
+ 269 005c 0022     		movs	r2, #0
+ 270 005e C254     		strb	r2, [r0, r3]
+  39:Src/buffer.c  ****         printf("NOK (invalid command: %s)\r\n", buf);
+ 271              		.loc 1 39 7 is_stmt 1 view .LVU56
+  39:Src/buffer.c  ****         printf("NOK (invalid command: %s)\r\n", buf);
+ 272              		.loc 1 39 10 is_stmt 0 view .LVU57
+ 273 0060 FFF7FEFF 		bl	execute_command
+ 274              	.LVL13:
+  39:Src/buffer.c  ****         printf("NOK (invalid command: %s)\r\n", buf);
+ 275              		.loc 1 39 9 view .LVU58
+ 276 0064 10F1020F 		cmn	r0, #2
+ 277 0068 05D0     		beq	.L28
+ 278              	.L20:
+  41:Src/buffer.c  ****       terminal_line();
+ 279              		.loc 1 41 7 is_stmt 1 view .LVU59
+  41:Src/buffer.c  ****       terminal_line();
+ 280              		.loc 1 41 11 is_stmt 0 view .LVU60
+ 281 006a 074B     		ldr	r3, .L29+4
+ 282 006c 0022     		movs	r2, #0
+ 283 006e 1A70     		strb	r2, [r3]
+  42:Src/buffer.c  ****     }else{
+ 284              		.loc 1 42 7 is_stmt 1 view .LVU61
+ 285 0070 FFF7FEFF 		bl	terminal_line
+ 286              	.LVL14:
+ 287 0074 D8E7     		b	.L18
+ 288              	.L28:
+  40:Src/buffer.c  ****       pos = 0;
+ 289              		.loc 1 40 9 view .LVU62
+ 290 0076 0549     		ldr	r1, .L29+8
+ 291 0078 0748     		ldr	r0, .L29+20
+ 292 007a FFF7FEFF 		bl	printf
+ 293              	.LVL15:
+ 294 007e F4E7     		b	.L20
+ 295              	.L22:
+ARM GAS  /tmp/ccXllfKY.s 			page 8
+
+
+ 296              	.LCFI3:
+ 297              		.cfi_def_cfa_offset 0
+ 298              		.cfi_restore 4
+ 299              		.cfi_restore 14
+ 300 0080 7047     		bx	lr
+ 301              	.L30:
+ 302 0082 00BF     		.align	2
+ 303              	.L29:
+ 304 0084 00000000 		.word	recv
+ 305 0088 00000000 		.word	.LANCHOR0
+ 306 008c 00000000 		.word	buf
+ 307 0090 00000000 		.word	.LC2
+ 308 0094 28000000 		.word	.LC3
+ 309 0098 2C000000 		.word	.LC4
+ 310              		.cfi_endproc
+ 311              	.LFE289:
+ 313              		.global	pos
+ 314              		.comm	recv,1,1
+ 315              		.comm	buf,40,4
+ 316              		.section	.bss.pos,"aw",%nobits
+ 317              		.set	.LANCHOR0,. + 0
+ 320              	pos:
+ 321 0000 00       		.space	1
+ 322              		.text
+ 323              	.Letext0:
+ 324              		.file 2 "/nfs/nfs5/home/research/hardware/arm2/gcc-arm-embedded/gcc-arm-none-eabi-9-2019-q4-major/
+ 325              		.file 3 "/nfs/nfs5/home/research/hardware/arm2/gcc-arm-embedded/gcc-arm-none-eabi-9-2019-q4-major/
+ 326              		.file 4 "/nfs/nfs5/home/research/hardware/arm2/gcc-arm-embedded/gcc-arm-none-eabi-9-2019-q4-major/
+ 327              		.file 5 "/nfs/nfs5/home/research/hardware/arm2/gcc-arm-embedded/gcc-arm-none-eabi-9-2019-q4-major/
+ 328              		.file 6 "/nfs/nfs5/home/research/hardware/arm2/gcc-arm-embedded/gcc-arm-none-eabi-9-2019-q4-major/
+ 329              		.file 7 "/nfs/nfs5/home/research/hardware/arm2/gcc-arm-embedded/gcc-arm-none-eabi-9-2019-q4-major/
+ 330              		.file 8 "/nfs/nfs5/home/research/hardware/arm2/gcc-arm-embedded/gcc-arm-none-eabi-9-2019-q4-major/
+ 331              		.file 9 "Drivers/CMSIS/Include/core_cm4.h"
+ 332              		.file 10 "Drivers/CMSIS/Device/ST/STM32L4xx/Include/system_stm32l4xx.h"
+ 333              		.file 11 "Drivers/STM32L4xx_HAL_Driver/Inc/stm32l4xx_hal_def.h"
+ 334              		.file 12 "Drivers/STM32L4xx_HAL_Driver/Inc/stm32l4xx_hal_flash.h"
+ 335              		.file 13 "Drivers/STM32L4xx_HAL_Driver/Inc/stm32l4xx_hal.h"
+ 336              		.file 14 "Inc/rtc.h"
+ 337              		.file 15 "/nfs/nfs5/home/research/hardware/arm2/gcc-arm-embedded/gcc-arm-none-eabi-9-2019-q4-major
+ 338              		.file 16 "<built-in>"
+ 339              		.file 17 "Inc/command.h"
+ARM GAS  /tmp/ccXllfKY.s 			page 9
+
+
+DEFINED SYMBOLS
+                            *ABS*:0000000000000000 buffer.c
+     /tmp/ccXllfKY.s:18     .text.buf_enqueue:0000000000000000 $t
+     /tmp/ccXllfKY.s:26     .text.buf_enqueue:0000000000000000 buf_enqueue
+     /tmp/ccXllfKY.s:44     .text.buf_enqueue:0000000000000008 $d
+                            *COM*:0000000000000001 recv
+     /tmp/ccXllfKY.s:49     .rodata.buf_dequeue.str1.4:0000000000000000 $d
+     /tmp/ccXllfKY.s:53     .text.buf_dequeue:0000000000000000 $t
+     /tmp/ccXllfKY.s:60     .text.buf_dequeue:0000000000000000 buf_dequeue
+     /tmp/ccXllfKY.s:101    .text.buf_dequeue:0000000000000020 $d
+     /tmp/ccXllfKY.s:107    .rodata.terminal_line.str1.4:0000000000000000 $d
+     /tmp/ccXllfKY.s:111    .text.terminal_line:0000000000000000 $t
+     /tmp/ccXllfKY.s:118    .text.terminal_line:0000000000000000 terminal_line
+     /tmp/ccXllfKY.s:153    .text.terminal_line:0000000000000018 $d
+     /tmp/ccXllfKY.s:158    .rodata.buf_process.str1.4:0000000000000000 $d
+     /tmp/ccXllfKY.s:168    .text.buf_process:0000000000000000 $t
+     /tmp/ccXllfKY.s:175    .text.buf_process:0000000000000000 buf_process
+     /tmp/ccXllfKY.s:304    .text.buf_process:0000000000000084 $d
+                            *COM*:0000000000000028 buf
+     /tmp/ccXllfKY.s:320    .bss.pos:0000000000000000 pos
+     /tmp/ccXllfKY.s:321    .bss.pos:0000000000000000 $d
+
+UNDEFINED SYMBOLS
+printf
+get_td
+free
+putchar
+puts
+execute_command

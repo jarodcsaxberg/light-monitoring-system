@@ -1,0 +1,746 @@
+ARM GAS  /tmp/ccPFSQkm.s 			page 1
+
+
+   1              		.cpu cortex-m4
+   2              		.eabi_attribute 27, 1
+   3              		.eabi_attribute 28, 1
+   4              		.eabi_attribute 20, 1
+   5              		.eabi_attribute 21, 1
+   6              		.eabi_attribute 23, 3
+   7              		.eabi_attribute 24, 1
+   8              		.eabi_attribute 25, 1
+   9              		.eabi_attribute 26, 1
+  10              		.eabi_attribute 30, 1
+  11              		.eabi_attribute 34, 1
+  12              		.eabi_attribute 18, 4
+  13              		.file	"light_sensor.c"
+  14              		.text
+  15              	.Ltext0:
+  16              		.cfi_sections	.debug_frame
+  17              		.section	.text.calculate_freq,"ax",%progbits
+  18              		.align	1
+  19              		.global	calculate_freq
+  20              		.arch armv7e-m
+  21              		.syntax unified
+  22              		.thumb
+  23              		.thumb_func
+  24              		.fpu fpv4-sp-d16
+  26              	calculate_freq:
+  27              	.LFB309:
+  28              		.file 1 "Src/light_sensor.c"
+   1:Src/light_sensor.c **** #include <_ansi.h>
+   2:Src/light_sensor.c **** #include <_syslist.h>
+   3:Src/light_sensor.c **** #include <errno.h>
+   4:Src/light_sensor.c **** #include <sys/time.h>
+   5:Src/light_sensor.c **** #include <sys/times.h>
+   6:Src/light_sensor.c **** #include <limits.h>
+   7:Src/light_sensor.c **** #include <signal.h>
+   8:Src/light_sensor.c **** #include <stdint.h>
+   9:Src/light_sensor.c **** #include <stdio.h>
+  10:Src/light_sensor.c **** #include "retarget.h"
+  11:Src/light_sensor.c **** #include "main.h"
+  12:Src/light_sensor.c **** #include <string.h>
+  13:Src/light_sensor.c **** #include <stdlib.h>
+  14:Src/light_sensor.c **** 
+  15:Src/light_sensor.c **** #include "light_sensor.h"
+  16:Src/light_sensor.c **** 
+  17:Src/light_sensor.c **** extern TIM_HandleTypeDef htim2;
+  18:Src/light_sensor.c **** extern ADC_HandleTypeDef hadc1;
+  19:Src/light_sensor.c **** 
+  20:Src/light_sensor.c **** volatile uint8_t captureDone = 0;
+  21:Src/light_sensor.c **** 
+  22:Src/light_sensor.c **** float calculate_freq() {
+  29              		.loc 1 22 24 view -0
+  30              		.cfi_startproc
+  31              		@ args = 0, pretend = 0, frame = 8
+  32              		@ frame_needed = 0, uses_anonymous_args = 0
+  33 0000 10B5     		push	{r4, lr}
+  34              	.LCFI0:
+  35              		.cfi_def_cfa_offset 8
+  36              		.cfi_offset 4, -8
+ARM GAS  /tmp/ccPFSQkm.s 			page 2
+
+
+  37              		.cfi_offset 14, -4
+  38 0002 82B0     		sub	sp, sp, #8
+  39              	.LCFI1:
+  40              		.cfi_def_cfa_offset 16
+  23:Src/light_sensor.c ****   uint32_t captures[2];
+  41              		.loc 1 23 3 view .LVU1
+  24:Src/light_sensor.c ****   uint32_t diffCapture = 0;
+  42              		.loc 1 24 3 view .LVU2
+  43              	.LVL0:
+  25:Src/light_sensor.c ****   float freq = 0;
+  44              		.loc 1 25 3 view .LVU3
+  26:Src/light_sensor.c **** 
+  27:Src/light_sensor.c ****   HAL_TIM_IC_Start_DMA(&htim2, TIM_CHANNEL_1, (uint32_t*) captures, 2);
+  45              		.loc 1 27 3 view .LVU4
+  46 0004 0223     		movs	r3, #2
+  47 0006 6A46     		mov	r2, sp
+  48 0008 0021     		movs	r1, #0
+  49 000a 1448     		ldr	r0, .L6
+  50 000c FFF7FEFF 		bl	HAL_TIM_IC_Start_DMA
+  51              	.LVL1:
+  52              	.L2:
+  28:Src/light_sensor.c **** 
+  29:Src/light_sensor.c ****   while(1){
+  53              		.loc 1 29 3 view .LVU5
+  30:Src/light_sensor.c ****     if(captureDone){
+  54              		.loc 1 30 5 view .LVU6
+  55              		.loc 1 30 8 is_stmt 0 view .LVU7
+  56 0010 134B     		ldr	r3, .L6+4
+  57 0012 1B78     		ldrb	r3, [r3]	@ zero_extendqisi2
+  58              		.loc 1 30 7 view .LVU8
+  59 0014 002B     		cmp	r3, #0
+  60 0016 FBD0     		beq	.L2
+  31:Src/light_sensor.c ****       if(captures[1] >= captures[0]) {
+  61              		.loc 1 31 7 is_stmt 1 view .LVU9
+  62              		.loc 1 31 18 is_stmt 0 view .LVU10
+  63 0018 019B     		ldr	r3, [sp, #4]
+  64              		.loc 1 31 33 view .LVU11
+  65 001a 009C     		ldr	r4, [sp]
+  66              		.loc 1 31 9 view .LVU12
+  67 001c A342     		cmp	r3, r4
+  68 001e 17D3     		bcc	.L3
+  32:Src/light_sensor.c ****         diffCapture = captures[1] - captures[0];
+  69              		.loc 1 32 9 is_stmt 1 view .LVU13
+  70              		.loc 1 32 21 is_stmt 0 view .LVU14
+  71 0020 1C1B     		subs	r4, r3, r4
+  72              	.LVL2:
+  73              	.L4:
+  33:Src/light_sensor.c ****       }
+  34:Src/light_sensor.c ****       else {
+  35:Src/light_sensor.c ****         diffCapture = (htim2.Instance->ARR - captures[0]) + captures[1];
+  36:Src/light_sensor.c ****       }
+  37:Src/light_sensor.c **** 
+  38:Src/light_sensor.c ****       freq = HAL_RCC_GetHCLKFreq() / (htim2.Instance->PSC + 1);
+  74              		.loc 1 38 7 is_stmt 1 view .LVU15
+  75              		.loc 1 38 14 is_stmt 0 view .LVU16
+  76 0022 FFF7FEFF 		bl	HAL_RCC_GetHCLKFreq
+  77              	.LVL3:
+ARM GAS  /tmp/ccPFSQkm.s 			page 3
+
+
+  78              		.loc 1 38 44 view .LVU17
+  79 0026 0D4B     		ldr	r3, .L6
+  80 0028 1B68     		ldr	r3, [r3]
+  81              		.loc 1 38 53 view .LVU18
+  82 002a 9B6A     		ldr	r3, [r3, #40]
+  83              		.loc 1 38 59 view .LVU19
+  84 002c 0133     		adds	r3, r3, #1
+  85              		.loc 1 38 36 view .LVU20
+  86 002e B0FBF3F0 		udiv	r0, r0, r3
+  87              		.loc 1 38 12 view .LVU21
+  88 0032 07EE900A 		vmov	s15, r0	@ int
+  89 0036 F8EE677A 		vcvt.f32.u32	s15, s15
+  90              	.LVL4:
+  39:Src/light_sensor.c ****       freq = (float) freq / diffCapture;
+  91              		.loc 1 39 7 is_stmt 1 view .LVU22
+  92              		.loc 1 39 27 is_stmt 0 view .LVU23
+  93 003a 07EE104A 		vmov	s14, r4	@ int
+  94 003e B8EE470A 		vcvt.f32.u32	s0, s14
+  95              	.LVL5:
+  40:Src/light_sensor.c **** 
+  41:Src/light_sensor.c ****       captureDone = 0;
+  96              		.loc 1 41 7 is_stmt 1 view .LVU24
+  97              		.loc 1 41 19 is_stmt 0 view .LVU25
+  98 0042 074B     		ldr	r3, .L6+4
+  99 0044 0022     		movs	r2, #0
+ 100 0046 1A70     		strb	r2, [r3]
+  42:Src/light_sensor.c ****       break;
+ 101              		.loc 1 42 7 is_stmt 1 view .LVU26
+  43:Src/light_sensor.c ****     }
+  44:Src/light_sensor.c ****   }
+  45:Src/light_sensor.c ****   
+  46:Src/light_sensor.c ****   return freq;
+ 102              		.loc 1 46 3 view .LVU27
+  47:Src/light_sensor.c **** }
+ 103              		.loc 1 47 1 is_stmt 0 view .LVU28
+ 104 0048 87EE800A 		vdiv.f32	s0, s15, s0
+ 105              	.LVL6:
+ 106              		.loc 1 47 1 view .LVU29
+ 107 004c 02B0     		add	sp, sp, #8
+ 108              	.LCFI2:
+ 109              		.cfi_remember_state
+ 110              		.cfi_def_cfa_offset 8
+ 111              		@ sp needed
+ 112 004e 10BD     		pop	{r4, pc}
+ 113              	.LVL7:
+ 114              	.L3:
+ 115              	.LCFI3:
+ 116              		.cfi_restore_state
+  35:Src/light_sensor.c ****       }
+ 117              		.loc 1 35 9 is_stmt 1 view .LVU30
+  35:Src/light_sensor.c ****       }
+ 118              		.loc 1 35 29 is_stmt 0 view .LVU31
+ 119 0050 024A     		ldr	r2, .L6
+ 120 0052 1268     		ldr	r2, [r2]
+  35:Src/light_sensor.c ****       }
+ 121              		.loc 1 35 38 view .LVU32
+ 122 0054 D26A     		ldr	r2, [r2, #44]
+ARM GAS  /tmp/ccPFSQkm.s 			page 4
+
+
+  35:Src/light_sensor.c ****       }
+ 123              		.loc 1 35 44 view .LVU33
+ 124 0056 141B     		subs	r4, r2, r4
+  35:Src/light_sensor.c ****       }
+ 125              		.loc 1 35 21 view .LVU34
+ 126 0058 1C44     		add	r4, r4, r3
+ 127              	.LVL8:
+  35:Src/light_sensor.c ****       }
+ 128              		.loc 1 35 21 view .LVU35
+ 129 005a E2E7     		b	.L4
+ 130              	.L7:
+ 131              		.align	2
+ 132              	.L6:
+ 133 005c 00000000 		.word	htim2
+ 134 0060 00000000 		.word	.LANCHOR0
+ 135              		.cfi_endproc
+ 136              	.LFE309:
+ 138              		.section	.text.HAL_TIM_IC_CaptureCallback,"ax",%progbits
+ 139              		.align	1
+ 140              		.global	HAL_TIM_IC_CaptureCallback
+ 141              		.syntax unified
+ 142              		.thumb
+ 143              		.thumb_func
+ 144              		.fpu fpv4-sp-d16
+ 146              	HAL_TIM_IC_CaptureCallback:
+ 147              	.LVL9:
+ 148              	.LFB310:
+  48:Src/light_sensor.c **** 
+  49:Src/light_sensor.c **** void HAL_TIM_IC_CaptureCallback(TIM_HandleTypeDef *htim) {
+ 149              		.loc 1 49 58 is_stmt 1 view -0
+ 150              		.cfi_startproc
+ 151              		@ args = 0, pretend = 0, frame = 0
+ 152              		@ frame_needed = 0, uses_anonymous_args = 0
+ 153              		@ link register save eliminated.
+  50:Src/light_sensor.c ****   if (htim->Channel == HAL_TIM_ACTIVE_CHANNEL_1) {
+ 154              		.loc 1 50 3 view .LVU37
+ 155              		.loc 1 50 11 is_stmt 0 view .LVU38
+ 156 0000 037F     		ldrb	r3, [r0, #28]	@ zero_extendqisi2
+ 157              		.loc 1 50 6 view .LVU39
+ 158 0002 012B     		cmp	r3, #1
+ 159 0004 00D0     		beq	.L10
+ 160              	.L8:
+  51:Src/light_sensor.c ****     captureDone = 1;
+  52:Src/light_sensor.c ****   }
+  53:Src/light_sensor.c **** }
+ 161              		.loc 1 53 1 view .LVU40
+ 162 0006 7047     		bx	lr
+ 163              	.L10:
+  51:Src/light_sensor.c ****     captureDone = 1;
+ 164              		.loc 1 51 5 is_stmt 1 view .LVU41
+  51:Src/light_sensor.c ****     captureDone = 1;
+ 165              		.loc 1 51 17 is_stmt 0 view .LVU42
+ 166 0008 014B     		ldr	r3, .L11
+ 167 000a 0122     		movs	r2, #1
+ 168 000c 1A70     		strb	r2, [r3]
+ 169              		.loc 1 53 1 view .LVU43
+ 170 000e FAE7     		b	.L8
+ARM GAS  /tmp/ccPFSQkm.s 			page 5
+
+
+ 171              	.L12:
+ 172              		.align	2
+ 173              	.L11:
+ 174 0010 00000000 		.word	.LANCHOR0
+ 175              		.cfi_endproc
+ 176              	.LFE310:
+ 178              		.section	.text.read_vrefint,"ax",%progbits
+ 179              		.align	1
+ 180              		.global	read_vrefint
+ 181              		.syntax unified
+ 182              		.thumb
+ 183              		.thumb_func
+ 184              		.fpu fpv4-sp-d16
+ 186              	read_vrefint:
+ 187              	.LFB312:
+  54:Src/light_sensor.c **** 
+  55:Src/light_sensor.c **** uint32_t read_temp(void) {
+  56:Src/light_sensor.c ****   static uint32_t first_time_up = 1;
+  57:Src/light_sensor.c ****   static ADC_ChannelConfTypeDef sConfig = {0};
+  58:Src/light_sensor.c ****   uint32_t rawTemp;
+  59:Src/light_sensor.c ****   uint32_t vref;
+  60:Src/light_sensor.c ****   uint32_t temp;
+  61:Src/light_sensor.c ****     
+  62:Src/light_sensor.c ****   if (first_time_up) {
+  63:Src/light_sensor.c ****     sConfig.Channel = ADC_CHANNEL_TEMPSENSOR;
+  64:Src/light_sensor.c ****     sConfig.Rank = ADC_REGULAR_RANK_1;
+  65:Src/light_sensor.c ****     sConfig.SamplingTime = ADC_SAMPLETIME_47CYCLES_5;
+  66:Src/light_sensor.c ****     sConfig.SingleDiff = ADC_SINGLE_ENDED;
+  67:Src/light_sensor.c ****     sConfig.OffsetNumber = ADC_OFFSET_NONE;
+  68:Src/light_sensor.c ****     sConfig.Offset = 0;
+  69:Src/light_sensor.c ****     first_time_up = 0;
+  70:Src/light_sensor.c ****   }
+  71:Src/light_sensor.c ****   sConfig.Rank = ADC_REGULAR_RANK_1;
+  72:Src/light_sensor.c ****   if (HAL_ADC_ConfigChannel(&hadc1, &sConfig) != HAL_OK) {
+  73:Src/light_sensor.c ****       Error_Handler();
+  74:Src/light_sensor.c ****   }
+  75:Src/light_sensor.c ****   HAL_ADC_Start(&hadc1); 
+  76:Src/light_sensor.c ****   HAL_ADC_PollForConversion(&hadc1, HAL_MAX_DELAY);
+  77:Src/light_sensor.c ****   rawTemp = HAL_ADC_GetValue(&hadc1);
+  78:Src/light_sensor.c ****   HAL_ADC_Stop(&hadc1);
+  79:Src/light_sensor.c ****   /* sConfig.Rank = ADC_REGULAR_RANK_2; */
+  80:Src/light_sensor.c ****   /* if (HAL_ADC_ConfigChannel(&hadc1, &sConfig) != HAL_OK) { */
+  81:Src/light_sensor.c ****   /*     Error_Handler(); */
+  82:Src/light_sensor.c ****   /* } */
+  83:Src/light_sensor.c ****   vref = read_vrefint();
+  84:Src/light_sensor.c ****   temp = (__HAL_ADC_CALC_TEMPERATURE(vref,
+  85:Src/light_sensor.c ****                                      rawTemp,
+  86:Src/light_sensor.c ****                                      ADC_RESOLUTION_12B));
+  87:Src/light_sensor.c ****   return temp;
+  88:Src/light_sensor.c **** }
+  89:Src/light_sensor.c **** 
+  90:Src/light_sensor.c **** uint32_t read_vrefint(void) {
+ 188              		.loc 1 90 29 is_stmt 1 view -0
+ 189              		.cfi_startproc
+ 190              		@ args = 0, pretend = 0, frame = 0
+ 191              		@ frame_needed = 0, uses_anonymous_args = 0
+ 192 0000 38B5     		push	{r3, r4, r5, lr}
+ARM GAS  /tmp/ccPFSQkm.s 			page 6
+
+
+ 193              	.LCFI4:
+ 194              		.cfi_def_cfa_offset 16
+ 195              		.cfi_offset 3, -16
+ 196              		.cfi_offset 4, -12
+ 197              		.cfi_offset 5, -8
+ 198              		.cfi_offset 14, -4
+  91:Src/light_sensor.c ****   static uint32_t first_time_up = 1;
+ 199              		.loc 1 91 3 view .LVU45
+  92:Src/light_sensor.c ****   static ADC_ChannelConfTypeDef sConfig = {0};
+ 200              		.loc 1 92 3 view .LVU46
+  93:Src/light_sensor.c ****   uint32_t rawVintref;
+ 201              		.loc 1 93 3 view .LVU47
+  94:Src/light_sensor.c **** 
+  95:Src/light_sensor.c ****   if (first_time_up) {
+ 202              		.loc 1 95 3 view .LVU48
+ 203              		.loc 1 95 7 is_stmt 0 view .LVU49
+ 204 0002 1E4B     		ldr	r3, .L20
+ 205 0004 1B68     		ldr	r3, [r3]
+ 206              		.loc 1 95 6 view .LVU50
+ 207 0006 5BB1     		cbz	r3, .L14
+  96:Src/light_sensor.c ****     sConfig.Channel = ADC_CHANNEL_VREFINT;
+ 208              		.loc 1 96 5 is_stmt 1 view .LVU51
+ 209              		.loc 1 96 21 is_stmt 0 view .LVU52
+ 210 0008 1D4B     		ldr	r3, .L20+4
+ 211 000a 1E4A     		ldr	r2, .L20+8
+ 212 000c 1A60     		str	r2, [r3]
+  97:Src/light_sensor.c ****     sConfig.Rank = ADC_REGULAR_RANK_1;
+ 213              		.loc 1 97 5 is_stmt 1 view .LVU53
+  98:Src/light_sensor.c ****     sConfig.SamplingTime = ADC_SAMPLETIME_47CYCLES_5;
+ 214              		.loc 1 98 5 view .LVU54
+ 215              		.loc 1 98 26 is_stmt 0 view .LVU55
+ 216 000e 0422     		movs	r2, #4
+ 217 0010 9A60     		str	r2, [r3, #8]
+  99:Src/light_sensor.c ****     sConfig.SingleDiff = ADC_SINGLE_ENDED;
+ 218              		.loc 1 99 5 is_stmt 1 view .LVU56
+ 219              		.loc 1 99 24 is_stmt 0 view .LVU57
+ 220 0012 7F21     		movs	r1, #127
+ 221 0014 D960     		str	r1, [r3, #12]
+ 100:Src/light_sensor.c ****     sConfig.OffsetNumber = ADC_OFFSET_NONE;
+ 222              		.loc 1 100 5 is_stmt 1 view .LVU58
+ 223              		.loc 1 100 26 is_stmt 0 view .LVU59
+ 224 0016 1A61     		str	r2, [r3, #16]
+ 101:Src/light_sensor.c ****     sConfig.Offset = 0;
+ 225              		.loc 1 101 5 is_stmt 1 view .LVU60
+ 226              		.loc 1 101 20 is_stmt 0 view .LVU61
+ 227 0018 0022     		movs	r2, #0
+ 228 001a 5A61     		str	r2, [r3, #20]
+ 102:Src/light_sensor.c ****     first_time_up = 0;
+ 229              		.loc 1 102 5 is_stmt 1 view .LVU62
+ 230              		.loc 1 102 19 is_stmt 0 view .LVU63
+ 231 001c 174B     		ldr	r3, .L20
+ 232 001e 1A60     		str	r2, [r3]
+ 233              	.L14:
+ 103:Src/light_sensor.c ****   }
+ 104:Src/light_sensor.c ****   sConfig.Rank = ADC_REGULAR_RANK_1;
+ 234              		.loc 1 104 3 is_stmt 1 view .LVU64
+ 235              		.loc 1 104 16 is_stmt 0 view .LVU65
+ARM GAS  /tmp/ccPFSQkm.s 			page 7
+
+
+ 236 0020 1749     		ldr	r1, .L20+4
+ 237 0022 0623     		movs	r3, #6
+ 238 0024 4B60     		str	r3, [r1, #4]
+ 105:Src/light_sensor.c ****   if (HAL_ADC_ConfigChannel(&hadc1, &sConfig) != HAL_OK) {
+ 239              		.loc 1 105 3 is_stmt 1 view .LVU66
+ 240              		.loc 1 105 7 is_stmt 0 view .LVU67
+ 241 0026 1848     		ldr	r0, .L20+12
+ 242 0028 FFF7FEFF 		bl	HAL_ADC_ConfigChannel
+ 243              	.LVL10:
+ 244              		.loc 1 105 6 view .LVU68
+ 245 002c F8B9     		cbnz	r0, .L18
+ 246              	.L15:
+ 106:Src/light_sensor.c ****       Error_Handler();
+ 107:Src/light_sensor.c ****   }
+ 108:Src/light_sensor.c ****   HAL_ADC_Start(&hadc1); 
+ 247              		.loc 1 108 3 is_stmt 1 view .LVU69
+ 248 002e 164C     		ldr	r4, .L20+12
+ 249 0030 2046     		mov	r0, r4
+ 250 0032 FFF7FEFF 		bl	HAL_ADC_Start
+ 251              	.LVL11:
+ 109:Src/light_sensor.c ****   HAL_ADC_PollForConversion(&hadc1, HAL_MAX_DELAY);
+ 252              		.loc 1 109 3 view .LVU70
+ 253 0036 4FF0FF31 		mov	r1, #-1
+ 254 003a 2046     		mov	r0, r4
+ 255 003c FFF7FEFF 		bl	HAL_ADC_PollForConversion
+ 256              	.LVL12:
+ 110:Src/light_sensor.c ****   rawVintref = HAL_ADC_GetValue(&hadc1);
+ 257              		.loc 1 110 3 view .LVU71
+ 258              		.loc 1 110 16 is_stmt 0 view .LVU72
+ 259 0040 2046     		mov	r0, r4
+ 260 0042 FFF7FEFF 		bl	HAL_ADC_GetValue
+ 261              	.LVL13:
+ 262 0046 0546     		mov	r5, r0
+ 263              	.LVL14:
+ 111:Src/light_sensor.c ****   HAL_ADC_Stop(&hadc1);
+ 264              		.loc 1 111 3 is_stmt 1 view .LVU73
+ 265 0048 2046     		mov	r0, r4
+ 266              	.LVL15:
+ 267              		.loc 1 111 3 is_stmt 0 view .LVU74
+ 268 004a FFF7FEFF 		bl	HAL_ADC_Stop
+ 269              	.LVL16:
+ 112:Src/light_sensor.c ****   sConfig.Rank = ADC_REGULAR_RANK_2;
+ 270              		.loc 1 112 3 is_stmt 1 view .LVU75
+ 271              		.loc 1 112 16 is_stmt 0 view .LVU76
+ 272 004e 0C49     		ldr	r1, .L20+4
+ 273 0050 0C23     		movs	r3, #12
+ 274 0052 4B60     		str	r3, [r1, #4]
+ 113:Src/light_sensor.c ****   if (HAL_ADC_ConfigChannel(&hadc1, &sConfig) != HAL_OK) {
+ 275              		.loc 1 113 3 is_stmt 1 view .LVU77
+ 276              		.loc 1 113 7 is_stmt 0 view .LVU78
+ 277 0054 2046     		mov	r0, r4
+ 278 0056 FFF7FEFF 		bl	HAL_ADC_ConfigChannel
+ 279              	.LVL17:
+ 280              		.loc 1 113 6 view .LVU79
+ 281 005a 58B9     		cbnz	r0, .L19
+ 282              	.L16:
+ 114:Src/light_sensor.c ****       Error_Handler();
+ARM GAS  /tmp/ccPFSQkm.s 			page 8
+
+
+ 115:Src/light_sensor.c ****   }
+ 116:Src/light_sensor.c ****   return(__HAL_ADC_CALC_VREFANALOG_VOLTAGE(rawVintref, ADC_RESOLUTION_12B));
+ 283              		.loc 1 116 3 is_stmt 1 view .LVU80
+ 284              		.loc 1 116 10 is_stmt 0 view .LVU81
+ 285 005c 0B4B     		ldr	r3, .L20+16
+ 286 005e 1B88     		ldrh	r3, [r3]
+ 287 0060 40F6B830 		movw	r0, #3000
+ 288 0064 00FB03F0 		mul	r0, r0, r3
+ 117:Src/light_sensor.c **** }
+ 289              		.loc 1 117 1 view .LVU82
+ 290 0068 B0FBF5F0 		udiv	r0, r0, r5
+ 291 006c 38BD     		pop	{r3, r4, r5, pc}
+ 292              	.LVL18:
+ 293              	.L18:
+ 106:Src/light_sensor.c ****   }
+ 294              		.loc 1 106 7 is_stmt 1 view .LVU83
+ 295 006e FFF7FEFF 		bl	Error_Handler
+ 296              	.LVL19:
+ 297 0072 DCE7     		b	.L15
+ 298              	.LVL20:
+ 299              	.L19:
+ 114:Src/light_sensor.c ****       Error_Handler();
+ 300              		.loc 1 114 7 view .LVU84
+ 301 0074 FFF7FEFF 		bl	Error_Handler
+ 302              	.LVL21:
+ 303 0078 F0E7     		b	.L16
+ 304              	.L21:
+ 305 007a 00BF     		.align	2
+ 306              	.L20:
+ 307 007c 00000000 		.word	.LANCHOR1
+ 308 0080 00000000 		.word	.LANCHOR2
+ 309 0084 01000080 		.word	-2147483647
+ 310 0088 00000000 		.word	hadc1
+ 311 008c AA75FF1F 		.word	536835498
+ 312              		.cfi_endproc
+ 313              	.LFE312:
+ 315              		.section	.text.read_temp,"ax",%progbits
+ 316              		.align	1
+ 317              		.global	read_temp
+ 318              		.syntax unified
+ 319              		.thumb
+ 320              		.thumb_func
+ 321              		.fpu fpv4-sp-d16
+ 323              	read_temp:
+ 324              	.LFB311:
+  55:Src/light_sensor.c ****   static uint32_t first_time_up = 1;
+ 325              		.loc 1 55 26 view -0
+ 326              		.cfi_startproc
+ 327              		@ args = 0, pretend = 0, frame = 0
+ 328              		@ frame_needed = 0, uses_anonymous_args = 0
+ 329 0000 38B5     		push	{r3, r4, r5, lr}
+ 330              	.LCFI5:
+ 331              		.cfi_def_cfa_offset 16
+ 332              		.cfi_offset 3, -16
+ 333              		.cfi_offset 4, -12
+ 334              		.cfi_offset 5, -8
+ 335              		.cfi_offset 14, -4
+ARM GAS  /tmp/ccPFSQkm.s 			page 9
+
+
+  56:Src/light_sensor.c ****   static ADC_ChannelConfTypeDef sConfig = {0};
+ 336              		.loc 1 56 3 view .LVU86
+  57:Src/light_sensor.c ****   uint32_t rawTemp;
+ 337              		.loc 1 57 3 view .LVU87
+  58:Src/light_sensor.c ****   uint32_t vref;
+ 338              		.loc 1 58 3 view .LVU88
+  59:Src/light_sensor.c ****   uint32_t temp;
+ 339              		.loc 1 59 3 view .LVU89
+  60:Src/light_sensor.c ****     
+ 340              		.loc 1 60 3 view .LVU90
+  62:Src/light_sensor.c ****     sConfig.Channel = ADC_CHANNEL_TEMPSENSOR;
+ 341              		.loc 1 62 3 view .LVU91
+  62:Src/light_sensor.c ****     sConfig.Channel = ADC_CHANNEL_TEMPSENSOR;
+ 342              		.loc 1 62 7 is_stmt 0 view .LVU92
+ 343 0002 1F4B     		ldr	r3, .L27
+ 344 0004 1B68     		ldr	r3, [r3]
+  62:Src/light_sensor.c ****     sConfig.Channel = ADC_CHANNEL_TEMPSENSOR;
+ 345              		.loc 1 62 6 view .LVU93
+ 346 0006 5BB1     		cbz	r3, .L23
+  63:Src/light_sensor.c ****     sConfig.Rank = ADC_REGULAR_RANK_1;
+ 347              		.loc 1 63 5 is_stmt 1 view .LVU94
+  63:Src/light_sensor.c ****     sConfig.Rank = ADC_REGULAR_RANK_1;
+ 348              		.loc 1 63 21 is_stmt 0 view .LVU95
+ 349 0008 1E4B     		ldr	r3, .L27+4
+ 350 000a 1F4A     		ldr	r2, .L27+8
+ 351 000c 1A60     		str	r2, [r3]
+  64:Src/light_sensor.c ****     sConfig.SamplingTime = ADC_SAMPLETIME_47CYCLES_5;
+ 352              		.loc 1 64 5 is_stmt 1 view .LVU96
+  65:Src/light_sensor.c ****     sConfig.SingleDiff = ADC_SINGLE_ENDED;
+ 353              		.loc 1 65 5 view .LVU97
+  65:Src/light_sensor.c ****     sConfig.SingleDiff = ADC_SINGLE_ENDED;
+ 354              		.loc 1 65 26 is_stmt 0 view .LVU98
+ 355 000e 0422     		movs	r2, #4
+ 356 0010 9A60     		str	r2, [r3, #8]
+  66:Src/light_sensor.c ****     sConfig.OffsetNumber = ADC_OFFSET_NONE;
+ 357              		.loc 1 66 5 is_stmt 1 view .LVU99
+  66:Src/light_sensor.c ****     sConfig.OffsetNumber = ADC_OFFSET_NONE;
+ 358              		.loc 1 66 24 is_stmt 0 view .LVU100
+ 359 0012 7F21     		movs	r1, #127
+ 360 0014 D960     		str	r1, [r3, #12]
+  67:Src/light_sensor.c ****     sConfig.Offset = 0;
+ 361              		.loc 1 67 5 is_stmt 1 view .LVU101
+  67:Src/light_sensor.c ****     sConfig.Offset = 0;
+ 362              		.loc 1 67 26 is_stmt 0 view .LVU102
+ 363 0016 1A61     		str	r2, [r3, #16]
+  68:Src/light_sensor.c ****     first_time_up = 0;
+ 364              		.loc 1 68 5 is_stmt 1 view .LVU103
+  68:Src/light_sensor.c ****     first_time_up = 0;
+ 365              		.loc 1 68 20 is_stmt 0 view .LVU104
+ 366 0018 0022     		movs	r2, #0
+ 367 001a 5A61     		str	r2, [r3, #20]
+  69:Src/light_sensor.c ****   }
+ 368              		.loc 1 69 5 is_stmt 1 view .LVU105
+  69:Src/light_sensor.c ****   }
+ 369              		.loc 1 69 19 is_stmt 0 view .LVU106
+ 370 001c 184B     		ldr	r3, .L27
+ 371 001e 1A60     		str	r2, [r3]
+ARM GAS  /tmp/ccPFSQkm.s 			page 10
+
+
+ 372              	.L23:
+  71:Src/light_sensor.c ****   if (HAL_ADC_ConfigChannel(&hadc1, &sConfig) != HAL_OK) {
+ 373              		.loc 1 71 3 is_stmt 1 view .LVU107
+  71:Src/light_sensor.c ****   if (HAL_ADC_ConfigChannel(&hadc1, &sConfig) != HAL_OK) {
+ 374              		.loc 1 71 16 is_stmt 0 view .LVU108
+ 375 0020 1849     		ldr	r1, .L27+4
+ 376 0022 0623     		movs	r3, #6
+ 377 0024 4B60     		str	r3, [r1, #4]
+  72:Src/light_sensor.c ****       Error_Handler();
+ 378              		.loc 1 72 3 is_stmt 1 view .LVU109
+  72:Src/light_sensor.c ****       Error_Handler();
+ 379              		.loc 1 72 7 is_stmt 0 view .LVU110
+ 380 0026 1948     		ldr	r0, .L27+12
+ 381 0028 FFF7FEFF 		bl	HAL_ADC_ConfigChannel
+ 382              	.LVL22:
+  72:Src/light_sensor.c ****       Error_Handler();
+ 383              		.loc 1 72 6 view .LVU111
+ 384 002c 20BB     		cbnz	r0, .L26
+ 385              	.L24:
+  75:Src/light_sensor.c ****   HAL_ADC_PollForConversion(&hadc1, HAL_MAX_DELAY);
+ 386              		.loc 1 75 3 is_stmt 1 view .LVU112
+ 387 002e 174C     		ldr	r4, .L27+12
+ 388 0030 2046     		mov	r0, r4
+ 389 0032 FFF7FEFF 		bl	HAL_ADC_Start
+ 390              	.LVL23:
+  76:Src/light_sensor.c ****   rawTemp = HAL_ADC_GetValue(&hadc1);
+ 391              		.loc 1 76 3 view .LVU113
+ 392 0036 4FF0FF31 		mov	r1, #-1
+ 393 003a 2046     		mov	r0, r4
+ 394 003c FFF7FEFF 		bl	HAL_ADC_PollForConversion
+ 395              	.LVL24:
+  77:Src/light_sensor.c ****   HAL_ADC_Stop(&hadc1);
+ 396              		.loc 1 77 3 view .LVU114
+  77:Src/light_sensor.c ****   HAL_ADC_Stop(&hadc1);
+ 397              		.loc 1 77 13 is_stmt 0 view .LVU115
+ 398 0040 2046     		mov	r0, r4
+ 399 0042 FFF7FEFF 		bl	HAL_ADC_GetValue
+ 400              	.LVL25:
+ 401 0046 0546     		mov	r5, r0
+ 402              	.LVL26:
+  78:Src/light_sensor.c ****   /* sConfig.Rank = ADC_REGULAR_RANK_2; */
+ 403              		.loc 1 78 3 is_stmt 1 view .LVU116
+ 404 0048 2046     		mov	r0, r4
+ 405              	.LVL27:
+  78:Src/light_sensor.c ****   /* sConfig.Rank = ADC_REGULAR_RANK_2; */
+ 406              		.loc 1 78 3 is_stmt 0 view .LVU117
+ 407 004a FFF7FEFF 		bl	HAL_ADC_Stop
+ 408              	.LVL28:
+  83:Src/light_sensor.c ****   temp = (__HAL_ADC_CALC_TEMPERATURE(vref,
+ 409              		.loc 1 83 3 is_stmt 1 view .LVU118
+  83:Src/light_sensor.c ****   temp = (__HAL_ADC_CALC_TEMPERATURE(vref,
+ 410              		.loc 1 83 10 is_stmt 0 view .LVU119
+ 411 004e FFF7FEFF 		bl	read_vrefint
+ 412              	.LVL29:
+  84:Src/light_sensor.c ****                                      rawTemp,
+ 413              		.loc 1 84 3 is_stmt 1 view .LVU120
+  84:Src/light_sensor.c ****                                      rawTemp,
+ARM GAS  /tmp/ccPFSQkm.s 			page 11
+
+
+ 414              		.loc 1 84 11 is_stmt 0 view .LVU121
+ 415 0052 00FB05F0 		mul	r0, r0, r5
+ 416              	.LVL30:
+  84:Src/light_sensor.c ****                                      rawTemp,
+ 417              		.loc 1 84 11 view .LVU122
+ 418 0056 0E4B     		ldr	r3, .L27+16
+ 419 0058 A3FB0030 		umull	r3, r0, r3, r0
+ 420 005c 0D4B     		ldr	r3, .L27+20
+ 421 005e 1A88     		ldrh	r2, [r3]
+ 422 0060 C2EB9010 		rsb	r0, r2, r0, lsr #6
+ 423 0064 6423     		movs	r3, #100
+ 424 0066 03FB00F0 		mul	r0, r3, r0
+ 425 006a 0B4B     		ldr	r3, .L27+24
+ 426 006c 1B88     		ldrh	r3, [r3]
+ 427 006e 9B1A     		subs	r3, r3, r2
+ 428 0070 90FBF3F0 		sdiv	r0, r0, r3
+ 429              	.LVL31:
+  87:Src/light_sensor.c **** }
+ 430              		.loc 1 87 3 is_stmt 1 view .LVU123
+  88:Src/light_sensor.c **** 
+ 431              		.loc 1 88 1 is_stmt 0 view .LVU124
+ 432 0074 1E30     		adds	r0, r0, #30
+ 433              	.LVL32:
+  88:Src/light_sensor.c **** 
+ 434              		.loc 1 88 1 view .LVU125
+ 435 0076 38BD     		pop	{r3, r4, r5, pc}
+ 436              	.LVL33:
+ 437              	.L26:
+  73:Src/light_sensor.c ****   }
+ 438              		.loc 1 73 7 is_stmt 1 view .LVU126
+ 439 0078 FFF7FEFF 		bl	Error_Handler
+ 440              	.LVL34:
+ 441 007c D7E7     		b	.L24
+ 442              	.L28:
+ 443 007e 00BF     		.align	2
+ 444              	.L27:
+ 445 0080 00000000 		.word	.LANCHOR3
+ 446 0084 00000000 		.word	.LANCHOR4
+ 447 0088 000052C7 		.word	-950927360
+ 448 008c 00000000 		.word	hadc1
+ 449 0090 F1197605 		.word	91625969
+ 450 0094 A875FF1F 		.word	536835496
+ 451 0098 CA75FF1F 		.word	536835530
+ 452              		.cfi_endproc
+ 453              	.LFE311:
+ 455              		.global	captureDone
+ 456              		.section	.bss.captureDone,"aw",%nobits
+ 457              		.set	.LANCHOR0,. + 0
+ 460              	captureDone:
+ 461 0000 00       		.space	1
+ 462              		.section	.bss.sConfig.11637,"aw",%nobits
+ 463              		.align	2
+ 464              		.set	.LANCHOR4,. + 0
+ 467              	sConfig.11637:
+ 468 0000 00000000 		.space	24
+ 468      00000000 
+ 468      00000000 
+ARM GAS  /tmp/ccPFSQkm.s 			page 12
+
+
+ 468      00000000 
+ 468      00000000 
+ 469              		.section	.bss.sConfig.11645,"aw",%nobits
+ 470              		.align	2
+ 471              		.set	.LANCHOR2,. + 0
+ 474              	sConfig.11645:
+ 475 0000 00000000 		.space	24
+ 475      00000000 
+ 475      00000000 
+ 475      00000000 
+ 475      00000000 
+ 476              		.section	.data.first_time_up.11636,"aw"
+ 477              		.align	2
+ 478              		.set	.LANCHOR3,. + 0
+ 481              	first_time_up.11636:
+ 482 0000 01000000 		.word	1
+ 483              		.section	.data.first_time_up.11644,"aw"
+ 484              		.align	2
+ 485              		.set	.LANCHOR1,. + 0
+ 488              	first_time_up.11644:
+ 489 0000 01000000 		.word	1
+ 490              		.text
+ 491              	.Letext0:
+ 492              		.file 2 "/nfs/nfs5/home/research/hardware/arm2/gcc-arm-embedded/gcc-arm-none-eabi-9-2019-q4-major/
+ 493              		.file 3 "/nfs/nfs5/home/research/hardware/arm2/gcc-arm-embedded/gcc-arm-none-eabi-9-2019-q4-major/
+ 494              		.file 4 "/nfs/nfs5/home/research/hardware/arm2/gcc-arm-embedded/gcc-arm-none-eabi-9-2019-q4-major/
+ 495              		.file 5 "/nfs/nfs5/home/research/hardware/arm2/gcc-arm-embedded/gcc-arm-none-eabi-9-2019-q4-major/
+ 496              		.file 6 "/nfs/nfs5/home/research/hardware/arm2/gcc-arm-embedded/gcc-arm-none-eabi-9-2019-q4-major/
+ 497              		.file 7 "/nfs/nfs5/home/research/hardware/arm2/gcc-arm-embedded/gcc-arm-none-eabi-9-2019-q4-major/
+ 498              		.file 8 "/nfs/nfs5/home/research/hardware/arm2/gcc-arm-embedded/gcc-arm-none-eabi-9-2019-q4-major/
+ 499              		.file 9 "/nfs/nfs5/home/research/hardware/arm2/gcc-arm-embedded/gcc-arm-none-eabi-9-2019-q4-major/
+ 500              		.file 10 "Drivers/CMSIS/Include/core_cm4.h"
+ 501              		.file 11 "Drivers/CMSIS/Device/ST/STM32L4xx/Include/system_stm32l4xx.h"
+ 502              		.file 12 "Drivers/CMSIS/Device/ST/STM32L4xx/Include/stm32l432xx.h"
+ 503              		.file 13 "Drivers/CMSIS/Device/ST/STM32L4xx/Include/stm32l4xx.h"
+ 504              		.file 14 "Drivers/STM32L4xx_HAL_Driver/Inc/stm32l4xx_hal_def.h"
+ 505              		.file 15 "Drivers/STM32L4xx_HAL_Driver/Inc/stm32l4xx_hal_dma.h"
+ 506              		.file 16 "Drivers/STM32L4xx_HAL_Driver/Inc/stm32l4xx_hal_adc.h"
+ 507              		.file 17 "Drivers/STM32L4xx_HAL_Driver/Inc/stm32l4xx_hal_flash.h"
+ 508              		.file 18 "Drivers/STM32L4xx_HAL_Driver/Inc/stm32l4xx_hal_tim.h"
+ 509              		.file 19 "Drivers/STM32L4xx_HAL_Driver/Inc/stm32l4xx_hal.h"
+ 510              		.file 20 "/nfs/nfs5/home/research/hardware/arm2/gcc-arm-embedded/gcc-arm-none-eabi-9-2019-q4-major
+ 511              		.file 21 "Inc/main.h"
+ 512              		.file 22 "Drivers/STM32L4xx_HAL_Driver/Inc/stm32l4xx_hal_rcc.h"
+ARM GAS  /tmp/ccPFSQkm.s 			page 13
+
+
+DEFINED SYMBOLS
+                            *ABS*:0000000000000000 light_sensor.c
+     /tmp/ccPFSQkm.s:18     .text.calculate_freq:0000000000000000 $t
+     /tmp/ccPFSQkm.s:26     .text.calculate_freq:0000000000000000 calculate_freq
+     /tmp/ccPFSQkm.s:133    .text.calculate_freq:000000000000005c $d
+     /tmp/ccPFSQkm.s:139    .text.HAL_TIM_IC_CaptureCallback:0000000000000000 $t
+     /tmp/ccPFSQkm.s:146    .text.HAL_TIM_IC_CaptureCallback:0000000000000000 HAL_TIM_IC_CaptureCallback
+     /tmp/ccPFSQkm.s:174    .text.HAL_TIM_IC_CaptureCallback:0000000000000010 $d
+     /tmp/ccPFSQkm.s:179    .text.read_vrefint:0000000000000000 $t
+     /tmp/ccPFSQkm.s:186    .text.read_vrefint:0000000000000000 read_vrefint
+     /tmp/ccPFSQkm.s:307    .text.read_vrefint:000000000000007c $d
+     /tmp/ccPFSQkm.s:316    .text.read_temp:0000000000000000 $t
+     /tmp/ccPFSQkm.s:323    .text.read_temp:0000000000000000 read_temp
+     /tmp/ccPFSQkm.s:445    .text.read_temp:0000000000000080 $d
+     /tmp/ccPFSQkm.s:460    .bss.captureDone:0000000000000000 captureDone
+     /tmp/ccPFSQkm.s:461    .bss.captureDone:0000000000000000 $d
+     /tmp/ccPFSQkm.s:463    .bss.sConfig.11637:0000000000000000 $d
+     /tmp/ccPFSQkm.s:467    .bss.sConfig.11637:0000000000000000 sConfig.11637
+     /tmp/ccPFSQkm.s:470    .bss.sConfig.11645:0000000000000000 $d
+     /tmp/ccPFSQkm.s:474    .bss.sConfig.11645:0000000000000000 sConfig.11645
+     /tmp/ccPFSQkm.s:477    .data.first_time_up.11636:0000000000000000 $d
+     /tmp/ccPFSQkm.s:481    .data.first_time_up.11636:0000000000000000 first_time_up.11636
+     /tmp/ccPFSQkm.s:484    .data.first_time_up.11644:0000000000000000 $d
+     /tmp/ccPFSQkm.s:488    .data.first_time_up.11644:0000000000000000 first_time_up.11644
+
+UNDEFINED SYMBOLS
+HAL_TIM_IC_Start_DMA
+HAL_RCC_GetHCLKFreq
+htim2
+HAL_ADC_ConfigChannel
+HAL_ADC_Start
+HAL_ADC_PollForConversion
+HAL_ADC_GetValue
+HAL_ADC_Stop
+Error_Handler
+hadc1

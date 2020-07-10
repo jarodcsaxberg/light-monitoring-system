@@ -1,0 +1,14 @@
+"Id";"Designator";"Package";"Quantity";"Designation";"Supplier and ref";
+1;"U1";"TG-3541CE";1;"TG-3541CE";;;
+2;"TP3,TP2,TP1";"TestPoint_Pad_D1.5mm";3;"TestPoint";;;
+3;"R2,R1";"R_0603_1608Metric_Pad1.05x0.95mm_HandSolder";2;"200";;;
+4;"JP1";"SolderJumper-3_P1.3mm_Open_RoundedPad1.0x1.5mm";1;"Jumper_3_Open";;;
+5;"J2";"JST_XH_B3B-XH-AM_1x03_P2.50mm_Vertical";1;"Conn_01x03";;;
+6;"J1";"JST_XH_B4B-XH-AM_1x04_P2.50mm_Vertical";1;"Conn_01x04_Male";;;
+7;"IC1";"TSL237S-LF";1;"TSL237S-LF";;;
+8;"H4,H3,H2,H1";"MountingHole_2.2mm_M2_Pad_Via";4;"MountingHole";;;
+9;"C2,C4";"C_0603_1608Metric_Pad1.05x0.95mm_HandSolder";2;"1uF";;;
+10;"C1,C3";"C_0603_1608Metric_Pad1.05x0.95mm_HandSolder";2;"0.1uF";;;
+11;"BT1";"BatteryHolder_Keystone_1060_1x2032";1;"Battery_Cell";;;
+12;"U3";"QFN-32-1EP_5x5mm_P0.5mm_EP3.45x3.45mm";1;"STM32L432KCUx";;;
+13;"U2";"ftsh_14p_connector";1;"STDC14";;;

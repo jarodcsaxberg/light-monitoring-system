@@ -1,0 +1,6 @@
+break main
+break store_entry
+break write_record
+break flash_write_init
+break flash_erase
+break print_logs
