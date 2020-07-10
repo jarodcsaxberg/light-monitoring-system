@@ -4,20 +4,22 @@ This project seeks to design a light sensor that can be placed in the Hoosier Na
 
 ## Project Code
 
-The code can be found in project/, with the custom written code found in project/Inc and project/Src.
+The code can be found in [project/](https://github.com/jarodcsaxberg/light-monitoring-system/tree/master/project), with the custom written code found in [project/Inc](https://github.com/jarodcsaxberg/light-monitoring-system/tree/master/project/Inc) and [project/Src](https://github.com/jarodcsaxberg/light-monitoring-system/tree/master/project/Src).
 
 ## Design
 
-The KiCad files for the PCB design can be found in kicad_proj/e314_light_sensor.
+The KiCad files for the PCB design can be found in [kicad_proj/e314_light_sensor](https://github.com/jarodcsaxberg/light-monitoring-system/tree/master/kicad_proj/e314_light_sensor).
 
-The Fusion 360 files for the enclosure design can be found in enclosure/.
+A KiCad schematic is located [here](https://github.com/jarodcsaxberg/light-monitoring-system/blob/master/design_analysis/schematic.pdf).
+
+The Fusion 360 files for the enclosure design can be found in [enclosure/](https://github.com/jarodcsaxberg/light-monitoring-system/tree/master/enclosure).
 
 ## Analysis
 
-Cost and power analysis for the project is located in cost_power_analysis/.
+Cost and power analysis for the project is located in [cost_power_analysis/](https://github.com/jarodcsaxberg/light-monitoring-system/tree/master/cost_power_analysis).
 
-Design analysis can be found in design_analysis/.
+Design analysis can be found in [design_analysis/](https://github.com/jarodcsaxberg/light-monitoring-system/tree/master/design_analysis).
 
 ## Final Report
 
-The final report can be found in final_report/.
+The final report can be found in [final_report/](https://github.com/jarodcsaxberg/light-monitoring-system/tree/master/final_report).
